@@ -1,0 +1,29 @@
+#
+#     This is the most important thing to get right
+#
+# The name of the network to deploy into - Options are "testnet" or "mainnet"
+network_name: kusama # You must fill this in
+
+# These can change to your liking
+namespace: polkadot
+environment: dev
+owner: insight
+
+# Need to specify 3 availablilty zones here and also the region in region.tfvars
+azs:
+  - us-east-1a
+  - us-east-1b
+  - us-east-1c
+
+# Don't worry about the rest of this for a basic node deployment
+domain_name: dev.insight-icon.net
+private_tld: icon.internal
+
+# These enable the security group settings and later will enable the deployment of specific services
+# When bastion is enabled, you do not get public ssh access
+vault_enabled: true
+bastion_enabled: false
+monitoring_enabled: true
+hids_enabled: true
+logging_enabled: true
+consul_enabled: true
