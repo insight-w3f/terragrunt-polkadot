@@ -1,0 +1,5 @@
+---
+- name: Converge
+  hosts: public
+  roles:
+    - role: polkadot-public
