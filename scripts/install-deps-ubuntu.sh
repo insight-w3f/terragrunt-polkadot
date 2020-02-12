@@ -2,12 +2,14 @@
 #1
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install -y libssl-dev build-essential automake pkg-config libtool ibffi-dev libgmp-dev libyaml-cpp-dev
+sudo apt-get install -y libssl-dev build-essential automake pkg-config libtool libffi-dev libgmp-dev libyaml-cpp-dev
 sudo apt-get install -y python3.7-dev libsecp256k1-dev python3-pip curl git zip
 
 #2
-sudo pip3 requests==2.20.0
-sudo pip3 -H install cookiecutter preptools ansible awscli
+pip3 install requests==2.20.0
+pip3 install cookiecutter preptools ansible awscli
+pip install fire
+
 #3
 wget https://releases.hashicorp.com/terraform/0.12.12/terraform_0.12.12_linux_amd64.zip -O /tmp/terraform.zip
 unzip /tmp/terraform.zip -d /tmp/

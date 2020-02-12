@@ -5,11 +5,15 @@
   register: uname
   changed_when: False
 
-- name: install linux-headers
-  apt:
-    name: linux-headers-{{ uname.stdout }}
-    update_cache: yes
-  when: not "+" in uname.stdout
+- name: Install linux headers
+  package:
+    name: "linux-headers-{{ ansible_kernel }}"
+
+#- name: install linux-headers
+#  apt:
+#    name: linux-headers-{{ uname.stdout }}
+#    update_cache: yes
+#  when: not "+" in uname.stdout
 
 - name: add wireguard repo
   apt_repository:

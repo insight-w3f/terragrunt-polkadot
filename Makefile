@@ -1,4 +1,5 @@
 SHELL := /bin/bash -euo pipefail
+.PHONY
 
 ## ----------------------------------------------------------------------
 ## Makefile to run terragrunt commands to setup nodes for polkadot
@@ -19,7 +20,6 @@ clear-cache:	## Clear the cache of files left by terragrunt
 	find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \; && \
 	find . -type d -name ".terraform" -prune -exec rm -rf {} \;
 
-
 ###############
 # Network setup
 ###############
@@ -32,7 +32,6 @@ apply-network:
 destroy-network:
 	$(call tg_cmd,destroy-all,polkadot/aws/network)
 	$(call tg_cmd,destroy-all,polkadot/aws/security-groups) ; \
-
 
 ####################
 # Single Public Node
@@ -49,4 +48,3 @@ destroy-public-node-single:
 clone-all:	## Clones all the sub repos
 	meta git clone .; \
 	python scripts/subdir_cmd.py clone_all
-
