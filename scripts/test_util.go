@@ -1,4 +1,4 @@
-package test
+package scripts
 
 import (
 	"crypto/rand"
@@ -8,9 +8,23 @@ import (
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"log"
+	"os"
+	"path"
 )
 
-func generateKeys(privateKeyPath string, publicKeyPath string)  {
+func GetBaseDirectory()(baseDir string)  {
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+
+	baseDir = path.Join(cwd, "..")
+
+	return baseDir
+}
+
+
+func GenerateKeys(privateKeyPath string, publicKeyPath string)  {
 	bitSize := 4096
 
 	privateKey, err := generatePrivateKey(bitSize)

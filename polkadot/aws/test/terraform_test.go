@@ -1,20 +1,22 @@
 package test
 
 import (
-	"github.com/robc-io/terragrunt-polkadot/test"
 	"github.com/gruntwork-io/terratest/modules/aws"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/insight-infrastructure/terragrunt-polkadot/scripts"
 	"log"
 	"os"
 	"path"
 	"testing"
 )
 
-func TestTerraformPlaybookPublic(t *testing.T) {
+func TestTerragruntAwsComplete(t *testing.T) {
 	t.Parallel()
 
-	exampleFolder := test_structure.CopyTerraformFolderToTemp(t, "../", "examples/defaults")
+	baseDir := scripts.GetBaseDirectory()
+
+	baseFolder := test_structure.CopyTerraformFolderToTemp(t, baseDir, "polkadot/aws")
 	awsRegion := aws.GetRandomStableRegion(t, nil, nil)
 
 	cwd, err := os.Getwd()
@@ -25,10 +27,10 @@ func TestTerraformPlaybookPublic(t *testing.T) {
 	fixturesDir := path.Join(cwd, "fixtures")
 	privateKeyPath := path.Join(fixturesDir, "./keys/id_rsa_test")
 	publicKeyPath := path.Join(fixturesDir, "./keys/id_rsa_test.pub")
-	generateKeys(privateKeyPath, publicKeyPath)
+	scripts.GenerateKeys(privateKeyPath, publicKeyPath)
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: exampleFolder,
+		TerraformDir:    baseFolder,
 		TerraformBinary: "terragrunt",
 		Vars: map[string]interface{}{
 			"aws_region":         awsRegion,

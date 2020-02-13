@@ -1,11 +1,9 @@
 SHELL := /bin/bash -euo pipefail
-.PHONY
+.PHONY: test
 
 ## ----------------------------------------------------------------------
 ## Makefile to run terragrunt commands to setup nodes for polkadot
 ## ----------------------------------------------------------------------
-
-tg_cmd = terragrunt $(1) --terragrunt-source-update --auto-approve --terragrunt-non-interactive --terragrunt-working-dir $(2)
 
 help: ## Show this help.
 	@sed -ne '/@sed/!s/## //p' $(MAKEFILE_LIST)
@@ -20,27 +18,20 @@ clear-cache:	## Clear the cache of files left by terragrunt
 	find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \; && \
 	find . -type d -name ".terraform" -prune -exec rm -rf {} \;
 
-###############
-# Network setup
-###############
-apply-network:
-	$(call tg_cmd,apply,polkadot/aws/label) ; \
-	$(call tg_cmd,apply-all,polkadot/aws/network) ; \
-	$(call tg_cmd,apply,polkadot/aws/vpc) ; \
-	$(call tg_cmd,apply-all,polkadot/aws/security-groups)
+#####################
+# terragrunt commands
+#####################
+tg_cmd = terragrunt $(1) --terragrunt-source-update --auto-approve --terragrunt-non-interactive --terragrunt-working-dir $(2)
+apply-aws:
+	$(call tg_cmd,apply-all,polkadot/aws)
 
-destroy-network:
-	$(call tg_cmd,destroy-all,polkadot/aws/network)
-	$(call tg_cmd,destroy-all,polkadot/aws/security-groups) ; \
+destroy-aws:
+	$(call tg_cmd,destroy-all,polkadot/aws)
 
-####################
-# Single Public Node
-####################
-apply-public-node-single:
-	$(call tg_cmd,apply-all,polkadot/aws/public-nodes/single)
+test-aws:
+	go test ./polkadot/aws/test -v -timeout 15m
 
-destroy-public-node-single:
-	$(call tg_cmd,destroy,polkadot/aws/public-nodes/single)
+
 
 ######################
 # git actions - WIP!!!

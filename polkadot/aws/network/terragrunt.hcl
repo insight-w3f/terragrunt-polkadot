@@ -12,8 +12,5 @@ locals {
 
 inputs = {
   name = "${local.global_vars["namespace"]}-main"
-  azs = local.global_vars["azs"]
-  cidr = "10.0.0.0/16"
-  private_subnets = ["10.0.0.0/20", "10.0.16.0/20", "10.0.32.0/20"]
-  public_subnets = ["10.0.192.0/24", "10.0.193.0/24", "10.0.194.0/24"]
+  az_num = 1
 }
