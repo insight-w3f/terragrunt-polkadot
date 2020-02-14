@@ -1,0 +1,25 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: insightinfrastructure/terragrunt-aws-ci:v0.4.0
+    steps:
+      - checkout
+      - run:
+          name: clone all dependencies
+          command: |
+            pip install fire
+            make clone-all
+      - run:
+          name: Apply module
+          command: |
+            ssh-keygen -b 2048 -t rsa -f ./id_rsa -q -N ""
+            ./.circleci/test-trigger.sh
+      - run:
+          name: Destroy on failure
+          command: |
+            wget https://github.com/gruntwork-io/cloud-nuke/releases/download/v0.1.13/cloud-nuke_linux_amd64 -O ./cloud-nuke
+            chmod +x ./cloud-nuke
+            ./cloud-nuke aws --force
+          when: on_fail
