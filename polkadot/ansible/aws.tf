@@ -22,7 +22,8 @@ provider "aws" {
 
 data "aws_instances" "sentries" {
   filter {
-    name = ""
-    values = []
+    name = "tag:Name"
+    values = [
+      "public-single"]
   }
 }

@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestTerragruntAwsComplete(t *testing.T) {
+func TestTerragruntPacketComplete(t *testing.T) {
 	t.Parallel()
 
 	folderPath := "../../../"
@@ -26,7 +26,7 @@ func TestTerragruntAwsComplete(t *testing.T) {
 	publicKeyPath := path.Join(fixturesDir, "./keys/id_rsa_test.pub")
 	utils.GenerateKeys(privateKeyPath, publicKeyPath)
 
-	testFolder := "polkadot/aws"
+	testFolder := "polkadot/packet"
 
 	terraformOptions := &terraform.Options{
 		TerraformDir:    path.Join(baseFolder, testFolder),
@@ -40,4 +40,5 @@ func TestTerragruntAwsComplete(t *testing.T) {
 	test_structure.RunTestStage(t, "setup", func() {
 		utils.TgApplyAll(t, terraformOptions, path.Join(baseFolder, testFolder))
 	})
+
 }

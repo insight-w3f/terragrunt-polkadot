@@ -31,6 +31,8 @@ destroy-aws:
 test-aws:
 	go test ./polkadot/aws/test -v -timeout 15m
 
+test-packet:
+	go test ./polkadot/packet/test -v -timeout 15m
 
 
 ######################

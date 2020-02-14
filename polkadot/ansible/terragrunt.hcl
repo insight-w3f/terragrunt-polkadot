@@ -13,7 +13,6 @@ locals {
 
   # Dependencies
   ansible = "${get_parent_terragrunt_dir()}/${path_relative_to_include()}/${find_in_parent_folders("ansible")}"
-//  data = "../data"
 
   name = "public-single"
 }
@@ -29,15 +28,12 @@ locals {
 inputs = {
   name = local.name
 
-  project_id = "stuff"
+  project_id = "polkadot"
 
-  public_key = file(local.secrets["local_public_key"])
   private_key_path = local.secrets["local_private_key"]
 
   playbook_file_path = "${local.ansible}/main.yml"
   roles_dir = "${local.ansible}/roles"
 
 
-
-//  tags = dependency.data.outputs.tags
 }
