@@ -12,10 +12,7 @@ account.tfvars
 secrets.yaml
 
 # Other
-experiment
-notes.md
-bu
-Pipfile.lock
+id_rsa_test*
 
 # Cookiecutter
 config.yaml

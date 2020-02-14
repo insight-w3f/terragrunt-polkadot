@@ -1,4 +1,4 @@
-package scripts
+package utils
 
 import (
 	"crypto/rand"
@@ -9,16 +9,20 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
+	"path/filepath"
 )
 
 func GetBaseDirectory()(baseDir string)  {
-	cwd, err := os.Getwd()
+	//cwd, err := os.Getwd()
+	//if err != nil {
+	//	log.Println(err)
+	//}
+	//
+	//baseDir = path.Join(cwd, "..")
+	baseDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 	}
-
-	baseDir = path.Join(cwd, "..")
 
 	return baseDir
 }
