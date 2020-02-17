@@ -23,4 +23,5 @@ dependency "network" {
 inputs = {
   security_group_name = "public-single"
   public_key_path = local.secrets.public_key_path
+  private_key_path = local.secrets.private_key_path
 }
