@@ -1,9 +1,9 @@
 version: 2.1
 
 jobs:
-  build:
+  test:
     docker:
-      - image: insightinfrastructure/terragrunt-aws-ci:v0.4.0
+      - image: insightinfrastructure/terragrunt-aws-ci:v0.5.0
     steps:
       - checkout
       - run:
@@ -23,3 +23,8 @@ jobs:
             chmod +x ./cloud-nuke
             ./cloud-nuke aws --force
           when: on_fail
+workflows:
+  default:
+    jobs:
+      - test
+  version: 2
