@@ -1,4 +1,4 @@
-version: 2.1
+version: 2
 
 jobs:
   test:
@@ -22,6 +22,7 @@ jobs:
             ./cloud-nuke aws --force
           when: on_fail
 workflows:
+  version: 2
   default:
     jobs:
       - test
