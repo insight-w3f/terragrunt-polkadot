@@ -7,15 +7,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Copy the config and make configs
-          commmand: |
-            aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./configs.yaml
-            make configs
+        name: Copy the config and make configs
+        commmand: |
+          aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./configs.yaml
+          make configs
       - run:
-          name: Apply module
-          command: |
-            ssh-keygen -b 2048 -t rsa -f ./id_rsa -q -N ""
-            ./.circleci/test-trigger.sh
+        name: Apply module
+        command: |
+          ssh-keygen -b 2048 -t rsa -f ./id_rsa -q -N ""
+          ./.circleci/test-trigger.sh
       - run:
           name: Destroy on failure
           command: |
