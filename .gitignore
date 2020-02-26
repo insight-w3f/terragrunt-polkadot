@@ -7,17 +7,32 @@
 .terragrunt-cache/
 .terraform/
 
-# Sensitive config files
+#
+# Configs
+#
+config.yaml
+.circleci/.configs
+# Low level config files
 account.tfvars
 secrets.yaml
+global.yaml
+region.tfvars
+# Cookiecutter
+!{{cookiecutter.deployment_name}}/account.tfvars
+!{{cookiecutter.deployment_name}}/secrets.yaml
+!{{cookiecutter.deployment_name}}/global.yaml
+!{{cookiecutter.deployment_name}}/region.tfvars
+!{{cookiecutter.deployment_name}}/aws_sentries.tfvars
+
+
+# Python
+*.pyc
+Pipfile
+Pipfile.lock
 
 # Other
 id_rsa_test*
 
-# Cookiecutter
-config.yaml
-!{{cookiecutter.environment}}/account.tfvars
-!{{cookiecutter.environment}}/secrets.yaml
 
 # meta
 packer/
