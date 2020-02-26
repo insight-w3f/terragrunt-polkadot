@@ -26,6 +26,7 @@
   "aws_ebs_volume_size": 0,
   "packet_auth_token": "",
   "packet_hostname": "public-single",
+  "packet_project_name": "polkadot",
   "project_id": "polkadot",
   "public_key_path": "/home/YOUR_USER/.ssh/id_rsa.pub",
   "private_key_path": "/home/YOUR_USER/.ssh/id_rsa",
