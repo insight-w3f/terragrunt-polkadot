@@ -3,7 +3,7 @@ variable "packet_auth_token" {
   type = string
 }
 
-variable "project_id" {
+variable "project_name" {
   description = ""
   type = string
 }
@@ -25,31 +25,6 @@ variable "public_key" {
   type = string
 }
 
-variable "private_key_path" {
-  description = ""
-  type = string
-}
-
-variable "ssh_user" {
-  type = string
-  default = "root"
-}
-
-variable "playbook_file_path" {
-  description = ""
-  type = string
-}
-
-variable "roles_dir" {
-  description = ""
-  type = string
-}
-
-variable "playbook_vars" {
-  description = ""
-  type = map(string)
-  default = {}
-}
 
 variable "node_count" {
   description = ""
@@ -62,3 +37,30 @@ variable "name" {
   type = string
   default = "w3f"
 }
+
+
+//variable "private_key_path" {
+//  description = ""
+//  type = string
+//}
+//
+//variable "ssh_user" {
+//  type = string
+//  default = "root"
+//}
+//
+//variable "playbook_file_path" {
+//  description = ""
+//  type = string
+//}
+//
+//variable "roles_dir" {
+//  description = ""
+//  type = string
+//}
+//
+//variable "playbook_vars" {
+//  description = ""
+//  type = map(string)
+//  default = {}
+//}

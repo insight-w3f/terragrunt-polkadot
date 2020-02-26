@@ -1,4 +1,4 @@
-[validators]
+[validators-0]
 ${validators_ip}
 
 [validators-0:vars]
@@ -7,6 +7,9 @@ vpnpeer_address=10.0.0.1
 vpnpeer_cidr_suffix=24
 telemetryUrl=wss://mi.private.telemetry.backend/
 loggingFilter='sync=trace,afg=trace,babe=debug'
+
+[validator:children]
+validator-0
 
 [public-0]
 ${aws_ip}
@@ -18,6 +21,8 @@ vpnpeer_cidr_suffix=24
 telemetryUrl=wss://mi.private.telemetry.backend/
 loggingFilter='sync=trace,afg=trace,babe=debug'
 
+[public:children]
+public-0
 
 [all:vars]
 project=w3f
@@ -25,7 +30,6 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no -o ConnectTimeout=15'
 polkadot_binary_url='https://github.com/w3f/polkadot/releases/download/v0.6.11/polkadot'
 polkadot_binary_checksum='sha256:ce6d4fd45f2c3ff91117423ed04c952ddde3b20f393e3ea05a2081f04b8a926b'
 polkadot_network_id=ksmcc2
-build_dir=/home/user/.config/polkadot-secure-validator/build/w3f/ansible
 node_exporter_enabled='true'
 node_exporter_user='node_exporter_user'
 node_exporter_password='node_exporter_password'
