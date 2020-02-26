@@ -1,3 +1,39 @@
+########
+# Label
+########
+variable "environment" {
+  description = "The environment"
+  type        = string
+  default     = ""
+}
+
+variable "namespace" {
+  description = "The namespace to deploy into"
+  type        = string
+  default     = ""
+}
+
+variable "stage" {
+  description = "The stage of the deployment"
+  type        = string
+  default     = ""
+}
+
+variable "network_name" {
+  description = "The network name, ie kusama / mainnet"
+  type        = string
+  default     = ""
+}
+
+variable "owner" {
+  description = "Owner of the infrastructure"
+  type        = string
+  default     = ""
+}
+
+##########
+# Provider
+##########
 variable "packet_auth_token" {
   description = ""
   type = string
@@ -8,6 +44,9 @@ variable "project_name" {
   type = string
 }
 
+######
+# Node
+######
 variable "location" {
   description = ""
   type = string
