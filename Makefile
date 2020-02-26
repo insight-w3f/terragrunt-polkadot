@@ -17,7 +17,7 @@ install-deps-mac: 					## Install basics to run node on ubuntu - developers shou
 configs-prompt:						## Prompt user to enter values into configs
 	cookiecutter .
 
-configs-from-config:				## No input generation of config files from config.yaml
+configs:				## No input generation of config files from config.yaml
 	cookiecutter . --config-file=config.yaml --no-input
 
 clear-cache:	## Clear the cache of files left by terragrunt
@@ -38,10 +38,10 @@ test-aws:
 	go test ./polkadot/aws/test -v -timeout 15m
 
 apply-packet:
-	$(call tg_cmd,apply-all,polkadot/aws)
+	$(call tg_cmd,apply-all,polkadot/packet)
 
 destroy-packet:
-	$(call tg_cmd,destroy-all,polkadot/aws)
+	$(call tg_cmd,destroy-all,polkadot/packet)
 
 test-packet:
 	go test ./polkadot/packet/test -v -timeout 15m

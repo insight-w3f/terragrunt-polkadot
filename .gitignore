@@ -17,12 +17,10 @@ account.tfvars
 secrets.yaml
 global.yaml
 region.tfvars
+group.tfvars
+ansible_inventory.tpl
 # Cookiecutter
-!{{cookiecutter.deployment_name}}/account.tfvars
-!{{cookiecutter.deployment_name}}/secrets.yaml
-!{{cookiecutter.deployment_name}}/global.yaml
-!{{cookiecutter.deployment_name}}/region.tfvars
-!{{cookiecutter.deployment_name}}/aws_sentries.tfvars
+!{{cookiecutter.deployment_name}}/*
 
 
 # Python
@@ -32,7 +30,7 @@ Pipfile.lock
 
 # Other
 id_rsa_test*
-
+z_tmp
 
 # meta
 packer/
