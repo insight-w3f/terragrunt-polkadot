@@ -10,7 +10,7 @@ variable "aws_allowed_account_ids" {
 provider "aws" {
   version = "~> 2.2"
 
-  region              = var.aws_region
+  region              = "us-east-1"
   allowed_account_ids = var.aws_allowed_account_ids
 
   # Make it faster by skipping some things
@@ -24,6 +24,6 @@ data "aws_instances" "sentries" {
   filter {
     name = "tag:Name"
     values = [
-      "public-single"]
+      "sentry"]
   }
 }

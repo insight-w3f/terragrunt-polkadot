@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/robc-io/terraform-polkadot-sentry-nodes.git?ref=master"
+  source = "github.com/insight-infrastructure/terraform-polkadot-aws-sentry-node.git?ref=master"
 }
 
 include {
@@ -21,6 +21,7 @@ dependency "network" {
 }
 
 inputs = {
-  security_group_name = "public-single"
   public_key_path = local.secrets.public_key_path
+  security_group_id = dependency.network.outputs.sentry_security_group_id
+  subnet_id = dependency.network.outputs.public_subnets[0]
 }
