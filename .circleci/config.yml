@@ -7,10 +7,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: clone all dependencies
-          command: |
-            pip install fire
-            make clone-all
+          name: Copy the config and make configs
+          commmand: |
+            aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./configs.yaml
+            make configs
       - run:
           name: Apply module
           command: |
@@ -19,8 +19,6 @@ jobs:
       - run:
           name: Destroy on failure
           command: |
-            wget https://github.com/gruntwork-io/cloud-nuke/releases/download/v0.1.13/cloud-nuke_linux_amd64 -O ./cloud-nuke
-            chmod +x ./cloud-nuke
             ./cloud-nuke aws --force
           when: on_fail
 workflows:
