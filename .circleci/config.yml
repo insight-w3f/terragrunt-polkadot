@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Copy the config and make configs
           command: |
-            aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./configs.yaml
+            aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./config.yaml
             make configs
       - run:
           name: Apply module
