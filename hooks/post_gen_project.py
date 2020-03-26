@@ -8,22 +8,21 @@ SRC_DIR = os.path.join(PARENT_DIR, 'polkadot')
 DEPLOYMENT_NAME = '{{cookiecutter.deployment_name}}'
 
 config_files = [
-    {'name': 'account_aws.tfvars.j2',
-     'path': 'aws/account.tfvars'},
-    {'name': 'account_packet.tfvars.j2',
-     'path': 'packet/account.tfvars'},
+    {'name': 'account_aws.hcl.j2',
+     'path': 'aws/account.hcl'},
+    {'name': 'account_packet.hcl.j2',
+     'path': 'packet/account.hcl'},
     {'name': 'global.yaml.j2',
      'path': 'global.yaml'},
     {'name': 'ansible_inventory.tpl.j2',
      'path': 'ansible-playbook/ansible_inventory.tpl'},
-    {'name': 'region.tfvars.j2',
-     'path': 'region.tfvars'},
+    {'name': 'region.hcl.j2',
+     'path': 'region.hcl'},
     {'name': 'secrets.yaml.j2',
      'path': 'secrets.yaml'},
-    {'name': 'sentry_aws.tfvars.j2',
-     'path': 'aws/sentry/group.tfvars'},
+    {'name': 'sentry_aws.hcl.j2',
+     'path': 'aws/sentry/terraform.tfvars'},
 ]
-
 
 def move_files_to_dir(target_dir):
     for file in config_files:

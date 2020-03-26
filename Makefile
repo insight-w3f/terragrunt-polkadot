@@ -17,12 +17,18 @@ install-deps-mac: 					## Install basics to run node on ubuntu - developers shou
 configs-prompt:						## Prompt user to enter values into configs
 	cookiecutter .
 
-configs:				## No input generation of config files from config.yaml
-	cookiecutter . --config-file=config.yaml --no-input
+configs:				        ## No input generation of config files from config.yaml
+	@cookiecutter . --config-file=config.yaml --no-input && echo made configs
 
-clear-cache:	## Clear the cache of files left by terragrunt
-	find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \; && \
-	find . -type d -name ".terraform" -prune -exec rm -rf {} \;
+clear-cache:	                ## Clear the cache of files left by terragrunt
+	@find . -type d -name ".terragrunt-cache" -prune -exec rm -rf {} \; && \
+	find . -type d -name ".terraform" -prune -exec rm -rf {} \; && echo 'cleared cache'
+
+clear-configs:	                ## Clear the cache of files left by terragrunt
+	@find . -type f -name "*.tfvars" -prune -exec rm {} \; && \
+    find . -type f -name "global.yaml" -prune -exec rm {} \; && \
+    find . -type f -name "secrets.yaml" -prune -exec rm {} \; && echo 'cleared configs'
+
 
 #####################
 # terragrunt commands
