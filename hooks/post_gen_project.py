@@ -20,7 +20,7 @@ config_files = [
      'path': 'region.hcl'},
     {'name': 'secrets.yaml.j2',
      'path': 'secrets.yaml'},
-    {'name': 'sentry_aws.hcl.j2',
+    {'name': 'sentry_aws.tfvars.j2',
      'path': 'aws/sentry/terraform.tfvars'},
 ]
 

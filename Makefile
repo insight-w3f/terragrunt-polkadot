@@ -29,7 +29,6 @@ clear-configs:	                ## Clear the cache of files left by terragrunt
     find . -type f -name "global.yaml" -prune -exec rm {} \; && \
     find . -type f -name "secrets.yaml" -prune -exec rm {} \; && echo 'cleared configs'
 
-
 #####################
 # terragrunt commands
 #####################
