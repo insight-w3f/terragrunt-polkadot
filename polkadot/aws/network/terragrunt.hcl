@@ -7,10 +7,10 @@ include {
 }
 
 locals {
-  global_vars = yamldecode(file(find_in_parent_folders("global.yaml")))
+  global = yamldecode(file(find_in_parent_folders("global.yaml")))
 }
 
 inputs = {
-  name = "${local.global_vars["namespace"]}-main"
+  name = "${local.global["namespace"]}-main"
   az_num = 1
 }

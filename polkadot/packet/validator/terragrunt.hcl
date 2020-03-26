@@ -7,8 +7,8 @@ include {
 }
 
 locals {
-  global = yamldecode(file("${get_terragrunt_dir()}/${find_in_parent_folders("global.yaml")}"))
-  secrets = yamldecode(file("${get_terragrunt_dir()}/${find_in_parent_folders("secrets.yaml")}"))
+  global = yamldecode(file(find_in_parent_folders("global.yaml")))
+  secrets = yamldecode(file(find_in_parent_folders("secrets.yaml")))
 }
 
 inputs = {
