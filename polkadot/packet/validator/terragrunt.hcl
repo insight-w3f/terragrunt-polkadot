@@ -1,5 +1,5 @@
 terraform {
-  source = "."
+  source = "github.com/insight-infrastructure/terraform-polkadot-packet-node.git?ref=master"
 }
 
 include {
