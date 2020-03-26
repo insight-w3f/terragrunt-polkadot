@@ -1,28 +1,35 @@
 import os
 from shutil import rmtree, move, copytree, copy
+import yaml
 
 # The dir with the templates
+# HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.realpath(os.path.curdir)
 PARENT_DIR = os.path.dirname(PROJECT_DIR)
 SRC_DIR = os.path.join(PARENT_DIR, 'polkadot')
 DEPLOYMENT_NAME = '{{cookiecutter.deployment_name}}'
 
-config_files = [
-    {'name': 'account_aws.hcl.j2',
-     'path': 'aws/account.hcl'},
-    {'name': 'account_packet.hcl.j2',
-     'path': 'packet/account.hcl'},
-    {'name': 'global.yaml.j2',
-     'path': 'global.yaml'},
-    {'name': 'ansible_inventory.tpl.j2',
-     'path': 'ansible-playbook/ansible_inventory.tpl'},
-    {'name': 'region.hcl.j2',
-     'path': 'region.hcl'},
-    {'name': 'secrets.yaml.j2',
-     'path': 'secrets.yaml'},
-    {'name': 'sentry_aws.tfvars.j2',
-     'path': 'aws/sentry/terraform.tfvars'},
-]
+print(os.listdir(PROJECT_DIR))
+
+with open(os.path.join(PROJECT_DIR, 'paths.yaml')) as f:
+    config_files = yaml.load(f, Loader=yaml.FullLoader)
+
+# config_files = [
+#     {'name': 'account_aws.hcl.j2',
+#      'path': 'aws/account.hcl'},
+#     {'name': 'account_packet.hcl.j2',
+#      'path': 'packet/account.hcl'},
+#     {'name': 'global.yaml.j2',
+#      'path': 'global.yaml'},
+#     {'name': 'ansible_inventory.tpl.j2',
+#      'path': 'ansible-playbook/ansible_inventory.tpl'},
+#     {'name': 'region.hcl.j2',
+#      'path': 'region.hcl'},
+#     {'name': 'secrets.yaml.j2',
+#      'path': 'secrets.yaml'},
+#     {'name': 'sentry_aws.tfvars.j2',
+#      'path': 'aws/sentry/terraform.tfvars'},
+# ]
 
 def move_files_to_dir(target_dir):
     for file in config_files:
