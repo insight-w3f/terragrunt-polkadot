@@ -1,4 +1,4 @@
-module github.com/insight-infrastructure/terragrunt-polkadot
+module github.com/insight-w3f/terragrunt-polkadot
 
 go 1.13
 
