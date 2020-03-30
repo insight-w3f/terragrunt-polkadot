@@ -20,9 +20,10 @@ jobs:
           command: |
             ./cloud-nuke aws --force
           when: on_fail
+
 workflows:
   version: 2
   default:
     jobs:
-      - test
-
+      - test:
+          context: all-provider-ci-1

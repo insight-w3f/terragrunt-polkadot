@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-infrastructure/terraform-polkadot-aws-sentry-node.git?ref=master"
+  source = "github.com/insight-w3f/terraform-polkadot-aws-sentry-node.git?ref=master"
 }
 
 include {

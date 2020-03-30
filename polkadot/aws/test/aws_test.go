@@ -4,7 +4,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/files"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
-	"github.com/insight-infrastructure/terragrunt-polkadot/utils"
+	"github.com/insight-w3f/terragrunt-polkadot/utils"
 	"log"
 	"path"
 	"testing"
