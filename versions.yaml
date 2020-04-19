@@ -1,0 +1,29 @@
+dev:
+  aws:
+    api:
+      api-lb: master
+      asg: master
+      k8s-cluster: master
+      k8s-config: master
+      network: master
+  azure:
+    api:
+      api-lb: master
+      asg: master
+      k8s-cluster: master
+      k8s-config: master
+      network: master
+  gcp:
+    api:
+      api-lb: master
+      asg: master
+      k8s-cluster: master
+      k8s-config: master
+      network: master
+  do:
+    api:
+      k8s-cluster: master
+      k8s-config: master
+      network: master
+  packet:
+    validator: master
