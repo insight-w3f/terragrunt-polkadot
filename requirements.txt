@@ -1,4 +1,6 @@
-fire==0.2.1
+typer==0.2.1
 cookiecutter==1.7.0
 ansible==2.9.5
 pyyaml==5.3.1
+yamlordereddictloader==0.1.1
+inquirer
