@@ -153,7 +153,7 @@ def apply(deployment: str = 'select'):
 def destroy(deployment: str = 'select'):
     # Iterates through targets and destroys each one
     if deployment == 'select':
-        deployments = prompt_deployment_action('apply')
+        deployments = prompt_deployment_action('destroy')
     else:
         deployments = [deployment]
 
@@ -164,7 +164,7 @@ def destroy(deployment: str = 'select'):
             deployment_config = yaml.load(f, Loader=yaml.FullLoader)
 
         for t in deployment_config['targets'].reverse():
-            command = f"terragrunt apply --terragrunt-source-update --terragrunt-non-interactive --auto-approve --terragrunt-working-dir{t}"
+            command = f"terragrunt destroy --terragrunt-source-update --terragrunt-non-interactive --auto-approve --terragrunt-working-dir{t}"
             run_subprocess(command)
 
 
