@@ -7,14 +7,25 @@
 .terragrunt-cache/
 .terraform/
 
+.bak
+scratch.py
+
 #
 # Configs
 #
+
+deployments/*
+!deployments/.gitkeep
+
+
+
 config.yaml
 .circleci/.configs
 # Low level config files
 secrets.yaml
 global.yaml
+
+
 
 account.tfvars
 region.tfvars

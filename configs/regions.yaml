@@ -1,0 +1,28 @@
+aws:
+  - us-west-1
+  - us-west-2
+  - us-east-1
+  - us-east-2
+  - eu-west-1
+  - eu-west-2
+  - eu-east-1
+  - eu-east-2
+
+gcp:
+  - us-west1
+  - us-west2
+  - us-east1
+  - us-east2
+  - eu-west1
+  - eu-west2
+  - eu-east1
+  - eu-east2
+
+azure:
+  - stuff
+  - things
+
+do:
+  - stuff
+  - things
+

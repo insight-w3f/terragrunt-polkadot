@@ -1,0 +1,48 @@
+targets:
+  - path: polkadot/api/{{ cookiecutter.provider }}
+
+
+
+prod:
+  vault_enabled: true
+  bastion_enabled: false
+  monitoring_enabled: true
+  hids_enabled: true
+  logging_enabled: true
+  consul_enabled: true
+
+  provider: {{ cookiecutter.provider }}
+
+  targets:
+    - path: polkadot/api/{{ cookiecutter.provider }}
+
+  cookiecutter:
+    aws_enabled: true
+    azure_enabled: true
+    do_enabled: true
+    gcp_enabled: true
+
+    cloudflare_enable:
+      - true
+      - false
+
+    vault_enabled: true
+    bastion_enabled: false
+    monitoring_enabled: true
+    hids_enabled: true
+    logging_enabled: true
+    consul_enabled: true
+
+    provider:
+      - aws
+      - gcp
+      - do
+
+    num_azs:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7

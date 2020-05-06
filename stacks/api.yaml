@@ -1,0 +1,31 @@
+targets:
+  - polkadot/api/{{ provider }}/network
+  - polkadot/api/{{ provider }}/asg
+  - polkadot/api/{{ provider }}/api-lb
+  - polkadot/api/{{ provider }}/k8s-cluster
+  - polkadot/api/{{ provider }}/k8s-config
+
+user_vars:
+  min_asg_size: 2
+  max_asg_size: 5
+  public_key: The public key
+  private_key_path: The path to the private key
+  instance_type:
+    - t3.micro
+    - t3.small
+    - t3.medium
+    - t3.large
+    - t3.xlarge
+    - t3.2xlarge
+    - t3.4xlarge
+    - i3.large
+    - i3.xlarge
+    - i3.2xlarge
+
+stack_vars:
+  vault_enabled: true
+  bastion_enabled: false
+  monitoring_enabled: true
+  hids_enabled: true
+  logging_enabled: true
+  consul_enabled: true

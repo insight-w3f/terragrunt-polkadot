@@ -1,0 +1,35 @@
+prod:
+  vault_enabled: true
+  bastion_enabled: false
+  monitoring_enabled: true
+  hids_enabled: true
+  logging_enabled: true
+  consul_enabled: true
+
+  provider: {{ cookiecutter.provider }}
+
+  available_providers:
+    - aws
+    - gcp
+
+  dependency_stacks:
+    - account_setup
+    - sentry
+
+  cookiecutter:
+    provider:
+      - aws
+      - gcp
+      - do
+    region: {{ all_regions }}
+    num_azs:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+
+
+dev:

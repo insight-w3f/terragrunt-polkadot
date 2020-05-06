@@ -1,0 +1,5 @@
+stack: ""
+deployment_id: 0
+environment: "prod"
+namespace: "polkadot"
+region: "us-east-1"
