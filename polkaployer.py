@@ -1,14 +1,28 @@
+import subprocess
 import sys
 from os import listdir, path
+
 import inquirer
 import typer
-from jinja2 import Template
 import yaml
+from jinja2 import Template
 
 app = typer.Typer()
 
+STACKS_AVAILABLE = sorted([i.split('.')[0] for i in listdir('stacks')])
+DEPLOYMENTS_AVAILABLE = sorted([i for i in listdir('deployments')])
 
-def prompt_deployment():
+
+def prompt_deployment_action(action: str = 'apply'):
+    deployments = inquirer.prompt([inquirer.Checkbox('deployments',
+                                                     message=f"What deployments would you like to {action}?",
+                                                     choices=DEPLOYMENTS_AVAILABLE,
+                                                     default=DEPLOYMENTS_AVAILABLE[0])])['deployments']
+    sys.exit('Need to select provider') if len(deployments) == 0 else None
+    return deployments
+
+
+def prompt_deployment_create():
     deployment_questions = [
         inquirer.Text('namespace',
                       message='What namespace?',
@@ -65,14 +79,21 @@ def render_targets(targets: str, provider: str):
     return output_targets
 
 
+def run_subprocess(command: str):
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = p.communicate()
+    if err:
+        sys.exit(err)
+    return output
+
+
 @app.command()
 def create(stack: str = None, context: str = None, no_input: bool = False):
     # Find available stacks from 'stacks' directory and ask user which stack they want to deploy
-    stacks_available = sorted([i.split('.')[0] for i in listdir('stacks')])
     if not stack:
         stack = inquirer.prompt(
-            [inquirer.List('stack', message="What stack do you want to create?", choices=stacks_available)])['stack']
-    sys.exit('Stack not available ') if stack not in stacks_available else None
+            [inquirer.List('stack', message="What stack do you want to create?", choices=STACKS_AVAILABLE)])['stack']
+    sys.exit('Stack not available ') if stack not in STACKS_AVAILABLE else None
     with open(path.join('stacks', stack + '.yaml')) as f:
         stack_config = yaml.load(f, Loader=yaml.FullLoader)
 
@@ -87,7 +108,7 @@ def create(stack: str = None, context: str = None, no_input: bool = False):
     if no_input and not {'namespace', 'environment'} <= context_dict.keys():
         sys.exit('Need to provide namespace network_name environment region provider in context')
     else:
-        context_dict.update(prompt_deployment())
+        context_dict.update(prompt_deployment_create())
 
     # Prompt user for stack user vars
     context_dict.update(prompt_user_vars(stack_config['user_vars']))
@@ -102,6 +123,49 @@ def create(stack: str = None, context: str = None, no_input: bool = False):
             deployment_file_name = f"{stack}.{context_dict['namespace']}.{r}.yaml"
             with open(path.join('deployments', deployment_file_name), 'w') as f:
                 yaml.dump(deployment_dict, f, default_flow_style=False, sort_keys=False)
+
+
+@app.command()
+def list():
+    return DEPLOYMENTS_AVAILABLE
+
+
+@app.command()
+def apply(deployment: str = 'select'):
+    # Iterates through targets and applies each one
+    if deployment == 'select':
+        deployments = prompt_deployment_action('apply')
+    else:
+        deployments = [deployment]
+
+    print(deployments)
+
+    for d in deployments:
+        with open(path.join('deployments', d)) as f:
+            deployment_config = yaml.load(f, Loader=yaml.FullLoader)
+
+        for t in deployment_config['targets']:
+            command = f"terragrunt apply --terragrunt-source-update --terragrunt-non-interactive --auto-approve --terragrunt-working-dir{t}"
+            run_subprocess(command)
+
+
+@app.command()
+def destroy(deployment: str = 'select'):
+    # Iterates through targets and destroys each one
+    if deployment == 'select':
+        deployments = prompt_deployment_action('apply')
+    else:
+        deployments = [deployment]
+
+    print(deployments)
+
+    for d in deployments:
+        with open(path.join('deployments', d)) as f:
+            deployment_config = yaml.load(f, Loader=yaml.FullLoader)
+
+        for t in deployment_config['targets'].reverse():
+            command = f"terragrunt apply --terragrunt-source-update --terragrunt-non-interactive --auto-approve --terragrunt-working-dir{t}"
+            run_subprocess(command)
 
 
 if __name__ == '__main__':
