@@ -1,5 +1,5 @@
 stack: ""
-deployment_id: 0
-environment: "prod"
-namespace: "polkadot"
-region: "us-east-1"
+environment: prod
+namespace: polkadot
+network_name: kusama
+region: us-east-1

@@ -1,3 +1,4 @@
+
 targets:
   - polkadot/api/{{ provider }}/network
   - polkadot/api/{{ provider }}/asg
@@ -5,22 +6,51 @@ targets:
   - polkadot/api/{{ provider }}/k8s-cluster
   - polkadot/api/{{ provider }}/k8s-config
 
+inherits:
+  - base_stack
+
 user_vars:
+  provider:
+    - aws
+    - gcp
+    - azure
+
+
   min_asg_size: 2
   max_asg_size: 5
   public_key: The public key
   private_key_path: The path to the private key
   instance_type:
-    - t3.micro
-    - t3.small
-    - t3.medium
-    - t3.large
-    - t3.xlarge
-    - t3.2xlarge
-    - t3.4xlarge
-    - i3.large
-    - i3.xlarge
-    - i3.2xlarge
+    type: slect
+    choices:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t3.xlarge
+      - t3.2xlarge
+      - t3.4xlarge
+      - i3.large
+      - i3.xlarge
+      - i3.2xlarge
+    when: provider == 'aws'
+
+  thing:
+    - stuff
+    - foo
+  secrets:
+    type: stack
+
+  keystore_password:
+    type: password
+    message: What do foo?
+    choices:
+      - thing
+    when: thing == 'stuff'
+
+
+  instance_family:
+
 
 stack_vars:
   vault_enabled: true

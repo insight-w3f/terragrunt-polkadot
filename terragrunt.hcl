@@ -3,6 +3,7 @@ locals {
   vars = read_terragrunt_config(find_in_parent_folders("${get_parent_terragrunt_dir()}/variables.hcl"))
 
   namespace = local.vars.locals.namespace
+  network_name = local.vars.network_name
   environment = local.vars.locals.environment
   region = local.vars.locals.region
 }

@@ -8,7 +8,7 @@
 .terraform/
 
 .bak
-scratch.py
+scratch*
 
 #
 # Configs

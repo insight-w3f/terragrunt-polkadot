@@ -5,7 +5,7 @@ from os import listdir, path
 import inquirer
 import typer
 import yaml
-from jinja2 import Template
+from jinja2 import Template, FileSystemLoader, Environment
 
 app = typer.Typer()
 
@@ -13,7 +13,7 @@ STACKS_AVAILABLE = sorted([i.split('.')[0] for i in listdir('stacks')])
 DEPLOYMENTS_AVAILABLE = sorted([i for i in listdir('deployments')])
 
 
-def prompt_deployment_action(action: str = 'apply'):
+def prompt_deployment_action(action: str):
     deployments = inquirer.prompt([inquirer.Checkbox('deployments',
                                                      message=f"What deployments would you like to {action}?",
                                                      choices=DEPLOYMENTS_AVAILABLE,
@@ -57,17 +57,16 @@ def prompt_data_center():
                                                         message=f'What regions for {p}?',
                                                         choices=regions_available[p],
                                                         default=regions_available[p][0])])[p]
-
     return regions
 
 
 def prompt_user_vars(user_vars: dict):
     for k, v in user_vars.items():
         # Single choice
-        if type(v) == str:
+        if isinstance(v, str):
             user_vars.update({k: inquirer.prompt([inquirer.Text(k, message=k + "?", default=v)])[k]})
 
-        if type(v) == list:
+        if isinstance(v, list):
             user_vars.update({k: inquirer.prompt([inquirer.List(k, message=k + "?", choices=v)])[k]})
     return user_vars
 
@@ -77,6 +76,18 @@ def render_targets(targets: str, provider: str):
     for t in targets:
         output_targets.append(Template(t).render({'provider': provider}))
     return output_targets
+
+
+def render_variables_file(context: dict, template_name: str = 'variables.hcl.j2'):
+    with open(path.join('templates', template_name)) as file_:
+        template = Template(file_.read())
+
+    with open("variables.hcl", "w") as f:
+        f.write(template.render(context))
+
+
+def get_provider_from_region(region: str):
+    pass
 
 
 def run_subprocess(command: str):
@@ -104,6 +115,10 @@ def create(stack: str = None, context: str = None, no_input: bool = False):
             context_dict = yaml.load(f, Loader=yaml.FullLoader)
     else:
         context_dict = {}
+        
+    # 
+    # TODO: Need to fillout context logic... This is garbage now 
+    # 
     # Validate context
     if no_input and not {'namespace', 'environment'} <= context_dict.keys():
         sys.exit('Need to provide namespace network_name environment region provider in context')
@@ -120,25 +135,25 @@ def create(stack: str = None, context: str = None, no_input: bool = False):
 
         for r in deployment_target_map[p]:
             deployment_dict = {'targets': targets, 'vars': context_dict}
-            deployment_file_name = f"{stack}.{context_dict['namespace']}.{r}.yaml"
+            deployment_file_name = f"{stack}.{context_dict['namespace']}.{context_dict['network_name']}.{r}.yaml"
             with open(path.join('deployments', deployment_file_name), 'w') as f:
                 yaml.dump(deployment_dict, f, default_flow_style=False, sort_keys=False)
 
+#     TODO: Ask if want to deploy right away 
+
+# @app.command()
+# def list_deployments():
+#     print(DEPLOYMENTS_AVAILABLE)
+#     return DEPLOYMENTS_AVAILABLE
+
 
 @app.command()
-def list():
-    return DEPLOYMENTS_AVAILABLE
-
-
-@app.command()
-def apply(deployment: str = 'select'):
+def apply(deployment: str = 'current'):
     # Iterates through targets and applies each one
     if deployment == 'select':
         deployments = prompt_deployment_action('apply')
     else:
         deployments = [deployment]
-
-    print(deployments)
 
     for d in deployments:
         with open(path.join('deployments', d)) as f:

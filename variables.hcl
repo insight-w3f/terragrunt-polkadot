@@ -1,21 +1,13 @@
 locals {
-  deployment = yamldecode(file("${get_parent_terragrunt_dir()}/deployment.yaml")).deployment_vars
 
   namespace = "polkadot"
-  environment = local.deployment.locals.environment
-  region = local.deployment.locals.region
-  network_name = local.deployment.locals.network_name
+  network_name = "kusama"
+  environment = "dev"
+  region = "us-east-1"
 
-  deployment_vars = local.deployment_vars
+  deployment_name = "${local.stack}.${local.namespace}.${local.network_name}.${local.environment}.${local.region}"
 
-  secrets = local.deployment_vars.secrets
-
-  environment = contains(keys(local.deployment), local.environment) ? local.environment : "dev"
-
-  versions = yamldecode(file("${get_parent_terragrunt_dir()}/configs/versions.yaml"))[local.environment]
-
-  secrets = yamldecode(file("${get_parent_terragrunt_dir()}/configs/secrets.yaml"))[local.environment]
-  cluster_name = "${local.namespace}-${local.environment}"
-
-  env_vars = {}
+  deployment = "${yamldecode(file("${get_parent_terragrunt_dir()}/deployments/${local.deployment_name}.yaml"))}"
+  deployment_vars = "${local.deployment.locals.vars}"
+  versions = "${yamldecode(file("${get_parent_terragrunt_dir()}/configs/versions.yaml"))[local.environment]}"
 }
