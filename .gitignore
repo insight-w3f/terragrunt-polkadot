@@ -13,31 +13,9 @@ scratch*
 #
 # Configs
 #
-
-deployments/*
-!deployments/.gitkeep
-
-
-
-config.yaml
-.circleci/.configs
-# Low level config files
 secrets.yaml
-global.yaml
-
-
-
-account.tfvars
-region.tfvars
-group.tfvars
-account.hcl
-region.hcl
-# For group vars
-terraform.tfvars
-
+.circleci/.configs
 ansible_inventory.tpl
-# Cookiecutter
-!{{cookiecutter.deployment_name}}/*
 
 # Python
 *.pyc
@@ -46,9 +24,3 @@ Pipfile.lock
 
 # Other
 id_rsa_test*
-
-# meta
-packer/
-#ansible/
-modules/
-
