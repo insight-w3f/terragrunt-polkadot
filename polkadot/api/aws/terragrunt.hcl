@@ -41,4 +41,3 @@ provider "cloudflare" {
 }
 EOF
 }
-
