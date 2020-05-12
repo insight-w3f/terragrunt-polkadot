@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-aws-network.git?ref=${local.vars.versions.api.aws.network}"
+  source = "github.com/insight-w3f/terraform-polkadot-aws-network.git?ref=${local.vars.versions.network}"
 }
 
 include {
@@ -12,4 +12,5 @@ locals {
 
 inputs = {
   num_azs = 3
+  all_enabled = true
 }

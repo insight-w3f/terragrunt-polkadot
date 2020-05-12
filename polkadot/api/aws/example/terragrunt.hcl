@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-azure-network.git?ref=${local.vars.versions.network}"
+  source = "."
 }
 
 include {
@@ -10,6 +10,4 @@ locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
 }
 
-inputs = {
-  az_num = 1
-}
+inputs = {}

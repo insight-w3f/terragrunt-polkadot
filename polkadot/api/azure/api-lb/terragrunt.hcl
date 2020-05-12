@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-azure-sentry-api-lb.git?ref=master"
+  source = "github.com/insight-w3f/terraform-polkadot-azure-sentry-api-lb.git?ref=${local.vars.versions.api-lb}"
 }
 
 include {
@@ -7,6 +7,7 @@ include {
 }
 
 locals {
+  vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
   network = find_in_parent_folders("network")
 }
 

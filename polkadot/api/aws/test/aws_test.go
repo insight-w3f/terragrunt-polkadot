@@ -26,7 +26,7 @@ func TestTerragruntAwsComplete(t *testing.T) {
 	publicKeyPath := path.Join(fixturesDir, "./keys/id_rsa_test.pub")
 	utils.GenerateKeys(privateKeyPath, publicKeyPath)
 
-	testFolder := "polkadot/aws"
+	testFolder := "polkadot/api/aws"
 
 	terraformOptions := &terraform.Options{
 		TerraformDir:    path.Join(baseFolder, testFolder),

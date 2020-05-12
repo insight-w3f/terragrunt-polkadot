@@ -1,5 +1,0 @@
-stack: ""
-environment: prod
-namespace: polkadot
-network_name: kusama
-region: us-east-1

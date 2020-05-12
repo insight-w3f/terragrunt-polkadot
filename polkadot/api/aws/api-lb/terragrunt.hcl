@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-aws-api-lb.git?ref=${local.vars.versions.api.aws.api-lb}"
+  source = "github.com/insight-w3f/terraform-polkadot-aws-api-lb.git?ref=${local.vars.versions.api-lb}"
 }
 
 include {

@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-aws-k8s-cluster.git?ref=${local.vars.versions.api.aws.k8s-cluster}"
+  source = "github.com/insight-w3f/terraform-polkadot-aws-k8s-cluster.git?ref=${local.vars.versions.k8s-cluster}"
 }
 
 include {
@@ -20,7 +20,6 @@ dependency "network" {
 }
 
 inputs = {
-  public_key = local.vars.public_key
   vpc_id = dependency.network.outputs.vpc_id
   subnet_ids = dependency.network.outputs.public_subnets
   security_group_id = dependency.network.outputs.sentry_security_group_id
