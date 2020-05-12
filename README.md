@@ -55,6 +55,4 @@ See also these underlying repos for more context.
 - [terraform-packer-build](https://github.com/insight-infrastructure/terraform-packer-build) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-packer-build?style=svg)
 
 
-
-
-
+![](./w3f_badge.png)
