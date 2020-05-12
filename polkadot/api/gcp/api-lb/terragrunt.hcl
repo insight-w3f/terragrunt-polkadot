@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-sentry-api-lb.git?ref=master"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-sentry-api-lb.git?ref=${local.vars.versions.network}"
 }
 
 include {
