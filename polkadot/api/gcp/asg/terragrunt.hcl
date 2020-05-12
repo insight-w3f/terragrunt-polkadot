@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-sentry-node.git?ref=${local.vars.versions.network}"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-sentry-node.git?ref=${local.vars.versions.asg}"
 }
 
 include {
@@ -7,7 +7,7 @@ include {
 }
 
 locals {
-  secrets = yamldecode(file(find_in_parent_folders("secrets.yaml")))
+  vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
   network = find_in_parent_folders("network")
 }
 
@@ -20,7 +20,6 @@ dependency "network" {
 }
 
 inputs = {
-  public_key = file(local.secrets.public_key_path)
   security_group_id = dependency.network.outputs.sentry_security_group_id
   subnet_id = dependency.network.outputs.public_subnets[0]
 }

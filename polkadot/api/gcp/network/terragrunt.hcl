@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-network.git?ref=master"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-network.git?ref=${local.vars.versions.network}"
 }
 
 include {
@@ -7,10 +7,9 @@ include {
 }
 
 locals {
-  global = yamldecode(file(find_in_parent_folders("global.yaml")))
+  vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
 }
 
 inputs = {
-  name = "${local.global["namespace"]}-main"
   az_num = 1
 }
