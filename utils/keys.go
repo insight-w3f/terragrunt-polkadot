@@ -20,7 +20,7 @@ func GenerateKeys(t *testing.T, directory string) (*ssh.KeyPair, string, string)
 	uniqueID := random.UniqueId()
 
 	privKeyPath := path.Join(directory, uniqueID)
-	publicKeyPath := path.Join(directory, uniqueID, ".pub")
+	publicKeyPath := path.Join(directory, uniqueID + ".pub")
 
 	err := ioutil.WriteFile(privKeyPath, []byte(keyPair.PrivateKey), 0600)
 	if err != nil {
