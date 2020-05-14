@@ -20,6 +20,8 @@ dependency "network" {
 }
 
 inputs = {
+  cluster_id = local.vars.id
+
   security_group_id = dependency.network.outputs.sentry_security_group_id
   subnet_id = dependency.network.outputs.public_subnets[0]
 }

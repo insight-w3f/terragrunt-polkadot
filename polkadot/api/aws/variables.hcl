@@ -9,6 +9,8 @@ locals {
   environment = "dev"
   region = "us-east-1"
 
+  remote_state_region = "us-east-1"
+
   ###################
   # Environment Logic
   ###################
