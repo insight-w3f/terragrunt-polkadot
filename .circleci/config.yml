@@ -6,20 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Copy the config and make configs
-          command: |
-            aws s3 cp s3://ii-ci-1-configs/polkadot.yaml ./config.yaml
-            make configs
-      - run:
           name: Apply module
           command: |
-            ssh-keygen -b 2048 -t rsa -f ./id_rsa -q -N ""
             ./.circleci/test-trigger.sh
-      - run:
-          name: Destroy on failure
-          command: |
-            ./cloud-nuke aws --force
-          when: on_fail
 
 workflows:
   version: 2
