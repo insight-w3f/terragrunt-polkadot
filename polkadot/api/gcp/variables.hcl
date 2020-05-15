@@ -4,10 +4,11 @@ locals {
   ######################
   namespace = "polkadot"
   stack = "api"
-  provider = "azure"
+  provider = "gcp"
   network_name = "kusama"
   environment = "dev"
-  region = "West Europe" # location
+  region = "us-east1"
+  project = "polkadot-testing"
 
   remote_state_region = "us-east-1"
 
