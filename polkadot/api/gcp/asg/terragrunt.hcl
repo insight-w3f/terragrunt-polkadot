@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-sentry-node.git?ref=${local.vars.versions.asg}"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-asg.git?ref=${local.vars.versions.asg}"
 }
 
 include {
@@ -9,22 +9,29 @@ include {
 locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
   network = find_in_parent_folders("network")
-  api_lb = find_in_parent_folders("api-lb")
+  cluster = find_in_parent_folders("k8s-cluster")
 }
 
 dependencies {
-  paths = [local.network, local.api_lb]
+  paths = [local.network, local.cluster]
 }
 
 dependency "network" {
   config_path = local.network
 }
 
-dependency "api_lb" {
-  config_path = local.api_lb
+dependency "cluster" {
+  config_path = local.cluster
 }
 
 inputs = {
-  security_group_id = dependency.network.outputs.sentry_security_group_id
-  subnet_id = dependency.network.outputs.public_subnets[0]
+  public_subnet_id = dependency.network.outputs.public_subnets[1]
+  private_subnet_id = dependency.network.outputs.private_subnets[1]
+  node_name = local.vars.global_short_id
+  security_group_id = dependency.network.outputs.sentry_security_group_id[0]
+  vpc_id = dependency.network.outputs.public_vpc_id
+  cluster_name = dependency.cluster.outputs.cluster_name
+
+  # relay_node_ip = TODO
+  # relay_node_p2p_address = TODO
 }
