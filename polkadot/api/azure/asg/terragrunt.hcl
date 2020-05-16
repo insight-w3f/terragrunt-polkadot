@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-azure-sentry-node.git?ref=${local.vars.versions.asg}"
+  source = "github.com/insight-w3f/terraform-polkadot-azure-asg.git?ref=${local.vars.versions.asg}"
 }
 
 include {
@@ -9,24 +9,29 @@ include {
 locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
   network = find_in_parent_folders("network")
-  api_lb = find_in_parent_folders("api-lb")
+  cluster = find_in_parent_folders("k8s-cluster")
 }
 
 dependencies {
-  paths = [local.network, local.api_lb]
+  paths = [local.network, local.cluster]
 }
 
 dependency "network" {
   config_path = local.network
 }
 
-dependency "api_lb" {
-  config_path = local.api_lb
+dependency "cluster" {
+  config_path = local.cluster
 }
 
 inputs = {
-  security_group_id = dependency.network.outputs.sentry_security_group_id
-  subnet_id = dependency.network.outputs.public_subnets[0]
-
-  lb_target_group_arn = dependency.api_lb.outputs.lb_target_group_arn
+  k8s_resource_group = dependency.cluster.outputs.resource_group
+  k8s_scale_set = dependency.cluster.outputs.scale_set
+  public_subnet_id = dependency.network.outputs.public_subnets[0]
+  private_subnet_id = dependency.network.outputs.private_subnets[0]
+  network_security_group_id = dependency.network.outputs.public_network_security_group_id
+  application_security_group_id = dependency.network.outputs.sentry_application_security_group_id[0]
+  num_instances = 1
+  chain = local.vars.network_name
+  cluster_name = local.vars.id
 }
