@@ -7,9 +7,15 @@ locals {
   provider = "azure"
   network_name = "kusama"
   environment = "dev"
-  region = "West Europe" # location
+  region = "eastus" # location
 
   remote_state_region = "us-east-1"
+
+  azure_resource_group_name = local.id
+  create_public_regional_subdomain = true
+  consul_enabled = true
+  monitoring_enabled = true
+  prometheus_enabled = true
 
   ###################
   # Environment Logic
