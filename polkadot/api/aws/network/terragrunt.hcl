@@ -13,4 +13,5 @@ locals {
 inputs = {
   num_azs = 3
   all_enabled = true
+  vpc_name = local.vars.id
 }

@@ -10,6 +10,11 @@ locals {
   region = "us-east-1"
 
   remote_state_region = "us-east-1"
+  consul_enabled = true
+  monitoring_enabled = true
+  prometheus_enabled = true
+  create_public_regional_subdomain = true
+  use_lb = true
 
   ###################
   # Environment Logic
