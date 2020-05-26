@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-k8s-cluster.git?ref=${local.vars.versions.network}"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-k8s-cluster.git?ref=${local.vars.versions.k8s-cluster}"
 }
 
 include {

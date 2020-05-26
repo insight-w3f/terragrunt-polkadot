@@ -1,6 +1,6 @@
 dev:
   asg: master
-  k8s-cluster: k8s-provider-move
+  k8s-cluster: master
   k8s-config: master
   network: master
 prod:
