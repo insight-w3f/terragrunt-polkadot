@@ -1,11 +1,9 @@
 dev:
-  api-lb: master
   asg: master
   k8s-cluster: master
   k8s-config: master
   network: master
 prod:
-  api-lb: master
   asg: master
   k8s-cluster: master
   k8s-config: master
