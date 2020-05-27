@@ -10,10 +10,11 @@ locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
   cluster = find_in_parent_folders("k8s-cluster")
   asg = find_in_parent_folders("asg")
+  network = find_in_parent_folders("network")
 }
 
 dependencies {
-  paths = [local.asg, local.cluster]
+  paths = [local.asg, local.cluster, local.network]
 }
 
 dependency "asg" {
@@ -22,6 +23,10 @@ dependency "asg" {
 
 dependency "cluster" {
   config_path = local.cluster
+}
+
+dependency "network" {
+  config_path = local.network
 }
 
 generate "provider" {
@@ -66,4 +71,5 @@ inputs = {
   lb_endpoint = dependency.asg.outputs.lb_endpoint_ip
   user_email = local.vars.secrets.admin_user_email
   kubeconfig = base64encode(dependency.cluster.outputs.kube_config)
+  deployment_domain_name = dependency.network.outputs.public_regional_domain
 }
