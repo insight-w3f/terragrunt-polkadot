@@ -11,5 +11,6 @@ locals {
 }
 
 inputs = {
+  vpc_name = local.vars.global_short_id
   az_num = 1
 }

@@ -20,8 +20,14 @@ locals {
   # Environment Logic
   ###################
   env_vars = {
-    dev = {}
-    prod = {}
+    dev = {
+      num_azs = 3
+      instance_type = "t2.small"
+    }
+    prod = {
+      num_azs = 3
+      instance_type = "i3.large"
+    }
   }[local.environment]
 
   # Imports

@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-k8s-cluster.git?ref=${local.vars.versions.network}"
+  source = "github.com/insight-w3f/terraform-polkadot-gcp-k8s-cluster.git?ref=${local.vars.versions.k8s-cluster}"
 }
 
 include {
@@ -20,6 +20,8 @@ dependency "network" {
 }
 
 inputs = {
-  security_group_id = dependency.network.outputs.sentry_security_group_id
-  subnet_id = dependency.network.outputs.public_subnets[0]
+  vpc_name = dependency.network.outputs.public_vpc_name
+  cluster_name = local.vars.global_short_id
+  worker_instance_type = "n1-standard-2"
+  kubernetes_subnet = dependency.network.outputs.kubernetes_subnet
 }
