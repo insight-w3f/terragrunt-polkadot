@@ -10,7 +10,4 @@ locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
 }
 
-inputs = {
-  num_azs = 3
-  all_enabled = true
-}
+inputs = {}

@@ -10,13 +10,25 @@ locals {
   region = "us-east-1"
 
   remote_state_region = "us-east-1"
+  consul_enabled = true
+  monitoring_enabled = true
+  prometheus_enabled = true
+  create_public_regional_subdomain = true
+  use_lb = true
+  use_external_lb = false
 
   ###################
   # Environment Logic
   ###################
   env_vars = {
-    dev = {}
-    prod = {}
+    dev = {
+      num_azs = 3
+      instance_type = "t2.small"
+    }
+    prod = {
+      num_azs = 3
+      instance_type = "i3.large"
+    }
   }[local.environment]
 
   # Imports
