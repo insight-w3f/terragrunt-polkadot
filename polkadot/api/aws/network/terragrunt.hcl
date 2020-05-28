@@ -10,4 +10,6 @@ locals {
   vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
 }
 
-inputs = {}
+inputs = {
+  vpc_name = local.vars.id
+}

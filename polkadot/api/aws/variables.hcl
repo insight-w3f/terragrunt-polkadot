@@ -15,7 +15,6 @@ locals {
   prometheus_enabled = true
   create_public_regional_subdomain = true
   use_lb = true
-  use_external_lb = false
 
   ###################
   # Environment Logic
