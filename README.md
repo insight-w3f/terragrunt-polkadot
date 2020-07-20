@@ -1,13 +1,47 @@
 # terragrunt-polkadot
 
-> WIP - Do not use. Very early in development.
+This is a reference architecture for deploying API nodes for Polkadot. Users can deploy infrastructure on one of
+ several supported clouds and can customize the network topology per their needs. This work was done per the
+ [Load Balanced Endpoints](https://github.com/w3f/Web3-collaboration/pull/250) grant proposal and is intended to be a
+  long term development project where new features and optimizations will be built in over time. 
 
-This is a multi-cloud reference architecture for deploying multiple different node topologies for Polkadot.
+Currently the API nodes themselves run on VMs with the supporting infrastructure running on kubernetes. In the future
+, options will be exposed to run the on either VMs, k8s, or some unique combination of both depending on what your
+ infrastructure needs are. 
 
-This work is very early stage and only meant to demonstrate broad architectural decisions in building out the
-terragrunt scaffolding for the grant proposal [Load Balanced Endpoints](https://github.com/w3f/Web3-collaboration/pull/250).
+### Getting started 
 
-See also these underlying repos for more context.
+To get started with an interactive CLI to configure node deployments: 
+
+```bash
+git clone https://github.com/insight-w3f/terragrunt-polkadot
+cd terragrunt-polkadot
+pip3 install nukikata  # A tool we designed to do interactive code templating
+nukikata .
+```
+
+By walking through the steps in the CLI, users should be able to fully customize the deployment of the cluster in any
+ cloud provider. 
+
+### How it works 
+
+This reference architecture is built with `terragrunt`, a wrapper to terraform, which under the hood calls Ansible
+ and Packer to configure VMs and Helm to configure kubernetes clusters. All aspects of the deployment are immutable
+ and thus, the main challenge with using all of these tools in combination with one another is exposing the right
+ options to the user that allow the customization of the deployment.  For that, we have built our own declarative CLI
+ codenamed `nukikata`, japanese for cookie cutter, which is a fork of the most popular code templating tool called
+ `cookiecutter`.  With this tool, we prompt the user to fillout the appropriate config files to then run the
+ underlying terragrunt commands to deploy the stack. 
+
+A critical element in understanding the deployment methodology is understanding how the parameters are handled within
+ the scope of a deployment to a provider. Normally with terragrunt, modules are structured in a heirarchial folder
+ format per the conventions of various reference implementation in use by the  
+
+### Network Topologies 
+
+The 
+
+
 
 ### Build Status
 
