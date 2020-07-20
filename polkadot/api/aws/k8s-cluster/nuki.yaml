@@ -1,0 +1,45 @@
+
+
+cluster_autoscale:
+  type: confirm
+  message: Do you want to enable cluster autoscaling?
+
+cluster_autoscale_max_workers:
+  type: input
+  message: What do you want the maximum number of workers to be?
+  when: "{{ nuki.cluster_autoscale }}"
+  default: 10
+
+cluster_autoscale_min_workers:
+  type: input
+  message: What do you want the minimum number of workers to be?
+  when: "{{ nuki.cluster_autoscale }}"
+  default: 3
+
+num_workers:
+  type: input
+  message: What do you want to set the initial number of workers to be?
+  when: "{{ nuki.cluster_autoscale }}"
+  default: 3
+
+aws_regions_options_:
+  type: aws_regions
+  when: "{{ nuki.aws_region is not defined }}"
+
+aws_region:
+  type: list
+  message: Which AWS region?
+  choices: "{{ nuki.aws_regions_options_ }}"
+  when: "{{ nuki.aws_region is not defined }}"
+
+aws_available_instances_:
+  type: aws_ec2_types
+  region: "{{ nuki.aws_region }}"
+  instance_families:
+    - c5
+    - m5
+
+worker_instance_type:
+  type: list
+  message: What type of worker instances do you want to create?
+  choices: "{{ nuki.aws_available_instances_ }}"

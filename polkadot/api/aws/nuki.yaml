@@ -1,0 +1,104 @@
+---
+
+action_:
+  type: list
+  message: What do you want to do?
+  choices:
+    - list: List deployments
+    - create: Create new deployment
+    - deploy: Deploy the infrastructucture
+    - modify: Modify existing
+    - test: Test an environment
+    - install: Install prerequisites
+#    - duplicate: Duplicate environment
+
+deployment_list_:
+  type: listdir
+  directory: deployments
+
+_environments:
+  - dev
+  - test
+  - stage
+  - prod
+
+#
+# Install Prerequisites
+#
+install_:
+  type: nukikata.
+  when: "{{ nuki.action_ == 'install' }}"
+  template: https://github.com/insight-infrastructure/nukikata-installs
+  existing_context:
+    install_deps:
+      - terraform
+      - awscli
+
+#
+# Testing 1/2
+#
+test_env_:
+  type: list
+  message: Which environment do you want to test?
+  choices: "{{ nuki._environments }}"
+  when: "{{ nuki.action_ == 'test' }}"
+
+#
+# List Deployments
+#
+list_:
+  type: table
+  column_names:
+    - Namespace
+    - Stack
+    - Network Name
+    - Environment
+    - Region
+  contents_split: "{{ nuki.deployment_list_ }}"
+  separator: "."
+  when: "{{ 'list' in nuki.action_ }}"
+
+#
+# Modify Existing
+#
+modify_:
+  type: nukikata
+  when: "{{ 'modify' in nuki.action_ }}"
+  chdir: /home/rob/go/src/github.com/insight-w3f/aws/terraform-polkadot-aws-network
+  merge: true
+
+#
+# Create New
+#
+create_:
+  type: nukikata
+  merge: true
+  context_file: nukis/create.yaml
+  existing_context: "{{ nuki }}"
+  when: "{{ 'create' in nuki.action_ }}"
+
+deployments_:
+  type: nukikata
+  context_file: nukis/configure.yaml
+  loop: "{{ nuki.aws_regions_ }}"
+  when: "{{ 'create' in nuki.action_ }}"
+  existing_context: "{{ nuki }}"
+
+deployment_write_:
+  type: yaml
+  loop: "{{ nuki.aws_regions_ }}"
+  path: "deployments/polkadot.api.{{nuki.network_name}}.{{nuki.environment}}.{{nuki.item}}.yaml"
+  contents: "{{ nuki.deployments_[nuki.index] }}"
+  when: "{{ 'create' in nuki.action_ }}"
+  remove:
+    - ^_
+    - _$
+
+#
+# Apply
+#
+apply_confirm_:
+  type: confirm
+  message: Do you want deploy now?
+  when: "{{ nuki.action_ in ['create', 'modify', 'duplicate'] }}"
+

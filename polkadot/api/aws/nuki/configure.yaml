@@ -1,0 +1,58 @@
+---
+
+region:
+  type: stat
+  input: "{{ configure.item }}"
+
+update_context_:
+  type: update
+  merge: true
+  dict: "{{ configure }}"
+  inputs:
+    - region: "{{ configure.item }}"
+    - action_: "configuration"
+
+network_:
+  type: nukikata
+  merge: true
+  template: https://github.com/insight-w3f/terraform-polkadot-aws-network
+#  checkout: "{{ configure.version_[configure.environment] }}"
+  checkout: nuki-init
+  existing_context: "{{ configure }}"
+#  chdir: /home/rob/go/src/github.com/insight-w3f/aws/terraform-polkadot-aws-network
+
+k8s-cluster:
+  type: nukikata
+  merge: true
+  chdir: k8s-cluster
+  existing_context: "{{ configure }}"
+
+asg:
+  type: nukikata
+  template: https://github.com/insight-w3f/terraform-polkadot-aws-asg
+  checkout: nuki-init
+  chdir: /home/rob/go/src/github.com/insight-w3f/aws/terraform-polkadot-aws-asg
+  merge: true
+#      checkout: "{{ configure.version_[configure.environment] }}"
+  existing_context: "{{ configure }}"
+
+k8s-config:
+  type: nukikata
+  template: .
+  chdir: /home/rob/go/src/github.com/insight-w3f/terraform-polkadot-k8s-config
+#      template: https://github.com/insight-w3f/terraform-polkadot-k8s-config
+#      checkout: nuki-init
+#      checkout: "{{ configure.version_[configure.environment] }}"
+  existing_context: "{{ configure }}"
+
+deployment_exists_:
+  type: path_exists
+  path: deployments/polkadot.api.{{configure.network_name}}.{{configure.environment}}.{{configure.region}}.yaml
+
+deployment_overwrite_:
+  type: confirm
+  message: |
+    Do you want to overwrite the existing polkadot.api.{{configure.network_name}}.{{configure.environment}}.{{configure.region}}
+    deployment? - will exit program ->
+  when: "{{ configure.deployment_exists_ }}"
+

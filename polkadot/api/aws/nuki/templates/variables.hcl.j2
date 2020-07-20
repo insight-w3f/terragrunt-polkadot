@@ -5,9 +5,9 @@ locals {
   namespace = "polkadot"
   stack = "api"
   provider = "aws"
-  network_name = "kusama"
-  environment = "dev"
-  region = "us-west-1"
+  network_name = "{{ deploy.network_name }}"
+  environment = "{{ deploy.environment }}"
+  region = "{{ deploy.region }}"
 
   deployment_map = {
     namespace = local.namespace

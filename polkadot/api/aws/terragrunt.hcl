@@ -20,8 +20,8 @@ remote_state {
 
 inputs = merge(
 local.vars.locals,
-local.vars.locals.env_vars,
 local.vars.locals.secrets,
+local.vars.locals.deployment_vars,
 )
 
 generate "provider" {
