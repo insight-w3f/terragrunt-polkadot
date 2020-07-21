@@ -36,9 +36,9 @@ This reference architecture is built with `terragrunt`, a wrapper to terraform, 
 
 A critical element in understanding the deployment methodology is understanding how the parameters are handled within
  the scope of a deployment to a provider. Normally with terragrunt, modules are structured in a heirarchial folder
- format per the conventions of various [reference implementations](https://github.com/gruntwork-io/terragrunt
--infrastructure-live-example) recommended by [industry experts](https://github.com
-/antonbabenko/terragrunt-reference-architecture). When running nodes in many regions across many providers, this
+ format per the conventions of various [reference implementations](https://github.com/gruntwork-io/terragrunt-infrastructure-live-example) 
+ recommended by [industry experts](https://github.com/antonbabenko/terragrunt-reference-architecture). 
+ When running nodes in many regions across many providers, this
  convention has a draw back of having many files and folders to keep track of. To simplify this, we take a so called
  "deployment centric" approach where each deployment consists of a file per namespace, stack, network name, environment
  , and cloud provider region to hold all the parameters needed to inform a properly running stack. These files are
