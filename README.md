@@ -3,10 +3,10 @@
 This is a reference architecture for deploying API nodes for Polkadot. Users can deploy infrastructure on one of
  several supported clouds and can customize the network topology per their needs. This work was done per the
  [Load Balanced Endpoints](https://github.com/w3f/Web3-collaboration/pull/250) grant proposal and is intended to be a
-  long term development project where new features and optimizations will be built in over time. 
+ long term development project where new features and optimizations will be built in over time. 
 
 Currently the API nodes themselves run on VMs with the supporting infrastructure running on kubernetes. In the future
-, options will be exposed to run the on either VMs, k8s, or some unique combination of both depending on what your
+ , options will be exposed to run the on either VMs, k8s, or some unique combination of both depending on what your
  infrastructure needs are. 
 
 ### Getting started 
@@ -21,7 +21,8 @@ nukikata .
 ```
 
 By walking through the steps in the CLI, users should be able to fully customize the deployment of the cluster in any
- cloud provider. 
+ cloud provider. Configuration settings are self-documented in the CLI or can be done manually by editing the
+  deployment files per the architecture described below. 
 
 ### How it works 
 
@@ -29,19 +30,47 @@ This reference architecture is built with `terragrunt`, a wrapper to terraform, 
  and Packer to configure VMs and Helm to configure kubernetes clusters. All aspects of the deployment are immutable
  and thus, the main challenge with using all of these tools in combination with one another is exposing the right
  options to the user that allow the customization of the deployment.  For that, we have built our own declarative CLI
- codenamed `nukikata`, japanese for cookie cutter, which is a fork of the most popular code templating tool called
- `cookiecutter`.  With this tool, we prompt the user to fillout the appropriate config files to then run the
- underlying terragrunt commands to deploy the stack. 
+ codenamed [`nukikata`](https://github.com/insight-infrastructure/nukikata), japanese for cookie cutter, which is a
+  fork of the most popular code templating tool called `cookiecutter`.  With this tool, we prompt the user to fillout 
+  the appropriate config files to then run the underlying terragrunt commands to deploy the stack. 
 
 A critical element in understanding the deployment methodology is understanding how the parameters are handled within
  the scope of a deployment to a provider. Normally with terragrunt, modules are structured in a heirarchial folder
- format per the conventions of various reference implementation in use by the  
+ format per the conventions of various [reference implementations](https://github.com/gruntwork-io/terragrunt
+-infrastructure-live-example) recommended by [industry experts](https://github.com
+/antonbabenko/terragrunt-reference-architecture). When running nodes in many regions across many providers, this
+ convention has a draw back of having many files and folders to keep track of. To simplify this, we take a so called
+ "deployment centric" approach where each deployment consists of a file per namespace, stack, network name, environment
+ , and cloud provider region to hold all the parameters needed to inform a properly running stack. These files are
+ currently stored locally in the `deployments` folder within each provider and soon, users will have the option of
+ storing the files and running the stack remotely. To run the deployment, we template the parent `terragrun.hcl` file
+  with the proper parameters that we need to deploy and then run terragrunt to deploy the infrastructure. Currently
+   deployments are executed sequentially and in the future the user will be able to deploy to multiple regions in
+    parallel. 
+  
+To manage this complex process, we developed nukikata as we felt that managing a declarative CLI in this context
+ would be more manageable as an organization.  We also want to make sure to allow features to be used across multiple
+  different implementations and hence see this approach as being more manageable in the long term as we build in new
+   features and expose unique decision tree like configuration options to allow users to easily navigate complex
+    deployments. We see many applications of nukikata and are excited to have this project be the intial proving
+     ground of this process that we hope to expand on for the years to come. 
 
 ### Network Topologies 
 
-The 
+The current architecture is based on a hybrid VM and kubernetes setup options are exposed to adopt either or
+ methodologies. 
+ 
+VMs are used for the fully archived nodes and are deployed in autoscaling groups behind a network load
+balancer.  To optimize the syncing of nodes, a source of truth node architecture is implemented where a single node
+is consistently syncing the latest chain data to a CDN that subsequent nodes sync off of directly. This reduces
+ scaling time down to ~5 minutes which is a major improvement on the normal scaling time. 
+ 
+Kubernetes is used for monitoring with prometheus, and logging with elasticsearch, and an nginx reverse proxy layer for
+ routing down to the archival nodes. Further optimizations are being planned on the reverse proxy layer to support
+  caching of near head queries and other types of pre-indexed query optimizations. We will also soon support a
+   kubernetes only deployment architecture. 
 
-
+![](./static/architecture-overview.png)
 
 ### Build Status
 
@@ -89,4 +118,4 @@ The
 - [terraform-packer-build](https://github.com/insight-infrastructure/terraform-packer-build) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-packer-build?style=svg)
 
 
-![](./w3f_badge.png)
+![](./static/w3f_badge.png)
