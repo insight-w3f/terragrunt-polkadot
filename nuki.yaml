@@ -1,0 +1,30 @@
+action_:
+  type: checkbox
+  message: What we trying to do now?
+  choices:
+    - deploy: Deploy infrastructure
+    - install: Install dependencies
+
+deps_:
+  type: checkbox
+  message: What dependencies do you want to install?
+  when: "{{ 'install' in nuki.action_ }}"
+  choices:
+    - terraform: terraform
+    - terragrunt: terragrunt
+    - ansible: ansible
+    - helm: helm
+    - kubectl: kubectl
+    - packer: packer
+
+installs_:
+  type: nukikata
+  template: https://github.com/insight-infrastructure/nukikata-installs
+  when: "{{ 'install' in nuki.action_ }}"
+  existing_context:
+    deps: "{{ nuki.deps_ }}"
+
+deploy_:
+  type: nukikata
+  chdir: polkadot/api
+  when: "{{ 'deploy' in nuki.action_ }}"

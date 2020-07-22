@@ -1,0 +1,29 @@
+
+providers:
+  type: checkbox
+  message: What cloud providers do you want to deploy on?
+  choices:
+    - name: AWS
+    - name: Azure
+    - name: DigitalOcean
+    - name: GCP
+
+aws_provider:
+  type: nukikata
+  chdir: aws
+  when: "{{ 'AWS' in nuki.providers }}"
+
+azure_provider:
+  type: nukikata
+  chdir: azure
+  when: "{{ 'Azure' in nuki.providers }}"
+
+do_provider:
+  type: nukikata
+  chdir: do
+  when: "{{ 'DigitalOcean' in nuki.providers }}"
+
+gcp_provider:
+  type: nukikata
+  chdir: gcp
+  when: "{{ 'GCP' in nuki.providers }}"
