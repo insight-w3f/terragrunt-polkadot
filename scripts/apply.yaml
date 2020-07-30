@@ -1,0 +1,21 @@
+---
+
+debug:
+  type: yaml
+  path: debug-apply.yaml
+  contents: "{{ apply }}"
+
+render_variables_hcl_:
+  type: jinja
+  template_path: "{{ apply.template_path }}"
+  file_system_loader: "{{ apply.file_system_loader }}"
+  output_path: variables.hcl
+  extra_context: "{{ apply }}"
+
+apply_global:
+  type: shell
+  command: terragrunt apply-all --terragrunt-non-interactive
+
+#run_terragrunt_:
+#  type: shell
+#  command: terragrunt apply-all --terragrunt-non-interactive --terragrunt-exclude-dir *global

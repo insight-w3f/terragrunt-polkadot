@@ -5,9 +5,9 @@ locals {
   namespace = "polkadot"
   stack = "api"
   provider = "aws"
-  network_name = "{{ deploy.network_name }}"
-  environment = "{{ deploy.environment }}"
-  region = "{{ deploy.region }}"
+  network_name = "{{ apply.network_name }}"
+  environment = "{{ apply.environment }}"
+  region = "{{ apply.region }}"
 
   deployment_map = {
     namespace = local.namespace
@@ -30,13 +30,13 @@ locals {
     prod = {}
   }[local.environment]
 
-  deployment_id_label_order = ["namespace", "stack", "network_name", "environment", "region"]
+  deployment_id_label_order = ["namespace", "stack", "network_name", "environment","provider", "region"]
   deployment_id = join(".", [ for i in local.deployment_id_label_order : lookup(local.label_map, i)])
-  deployment_vars = yamldecode(file(find_in_parent_folders("${get_parent_terragrunt_dir()}/deployments/${local.deployment_id}.yaml")))
+  deployment_vars = yamldecode(file("${find_in_parent_folders("deployments")}/${local.deployment_id}.yaml"))
 
   # Imports
   versions = yamldecode(file("${get_parent_terragrunt_dir()}/versions.yaml"))[local.environment]
-  secrets = yamldecode(file("${get_parent_terragrunt_dir()}/secrets.yaml"))[local.environment]
+  secrets = yamldecode(file(find_in_parent_folders("secrets.yaml")))
 
   ###################
   # Label Boilerplate
@@ -48,10 +48,14 @@ locals {
     network_name = local.network_name
     environment = local.environment
     region = local.region
+    global = "global"
   }
 
   remote_state_path_label_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
   remote_state_path = join("/", [ for i in local.remote_state_path_label_order : lookup(local.label_map, i)])
+
+  global_remote_state_path_label_order = ["namespace", "stack", "provider", "network_name", "environment", "global"]
+  global_remote_state_path = join("/", [ for i in local.global_remote_state_path_label_order : lookup(local.label_map, i)])
 
   id_label_order = ["namespace", "stack", "network_name", "environment"]
   id = join("-", [ for i in local.id_label_order : lookup(local.label_map, i)])

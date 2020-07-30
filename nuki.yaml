@@ -1,21 +1,66 @@
+#pprint:
+#  type: pprint
+#  statement: "{{ nuki }}"
+#
+#hold:
+#  type: confirm
+#  message: hold
+
+# Settings
+_environments:
+  - dev
+  - test
+  - stage
+  - prod
+
+deployments_list_:
+  type: listdir
+  path: deployments
+  ignore_hidden_files: true
+
+deployments_dir_:
+  type: find_in_parent
+  target: deployments
+
+file_system_loader_:
+  type: find_in_parent
+  target: templates
+
+scripts_dir_:
+  type: find_in_parent
+  target: scripts
+
+secrets_file_:
+  type: find_in_parent
+  target: secrets.yaml
+  fallback: NotExist
+
+# Action
 action_:
   type: checkbox
   message: What we trying to do now?
   choices:
-    - deploy: Deploy infrastructure
     - install: Install dependencies
+    - global: Set global settings
+    - list: List deployments
+    - create: Create deployment
+    - modify: Modify Existing
+    - deploy: Deploy existing
+#    - test: Test deployment
 
+# Install Dependencies
 deps_:
   type: checkbox
   message: What dependencies do you want to install?
   when: "{{ 'install' in nuki.action_ }}"
   choices:
-    - terraform: terraform
-    - terragrunt: terragrunt
-    - ansible: ansible
-    - helm: helm
+    - terraform: Terraform
+    - terragrunt: Terragrunt
+    - ansible: Ansible
+    - helm: Helm
     - kubectl: kubectl
-    - packer: packer
+    - packer: Packer
+    - awscli: AWS CLI
 
 installs_:
   type: nukikata
@@ -24,7 +69,93 @@ installs_:
   existing_context:
     deps: "{{ nuki.deps_ }}"
 
-deploy_:
+# Global Settings
+global_settings_:
+  type: checkbox
+  message: What global settings do you want to set?
+  when: "{{ 'global' in nuki.action_ }}"
+  choices:
+    - cloud-credentials: Cloud credentials
+    - ssh: Configure ssh keys
+    - dns: Configure DNS settins
+
+globals_:
+  type: nukikata
+  context_file: scripts/global.yaml
+  existing_context: "{{ nuki }}"
+  when: "{{ 'global' in nuki.action_ and nuki.global_settings_ | length > 0 }}"
+
+# List Deployments
+list_:
+  type: table
+  column_names:
+    - Namespace
+    - Stack
+    - Network Name
+    - Environment
+    - Provider
+    - Region
+  contents_split: "{{ nuki.deployments_list_ }}"
+  separator: "."
+  when: "{{ 'list' in nuki.action_ or 'deploy' in nuki.action_ }}"
+
+# Create Deployment
+create_:
   type: nukikata
   chdir: polkadot/api
+  when: "{{ 'create' in nuki.action_ }}"
+  existing_context: "{{ nuki }}"
+
+
+# Modify Existing
+modify_list_:
+  type: checkbox
+  message: |
+    {% if nuki.deployments_list_ | length == 0 %}There are no deployments to modify {% else %}
+    Which deployment would you like to modify?{% endif %}
+  choices: "{{ nuki.deployments_list_ }}"
+  when: "{{ nuki.action_ == 'modify' }}"
+
+modify_:
+  type: editor
+  message: Writer
+  when: "{{ nuki.action_ == 'modify' }}"
+  eargs:
+    editor: nano
+    ext: .yaml
+
+# Deploy
+deploy_choices_:
+  type: checkbox
+  message: Which deployments would you like to apply?
   when: "{{ 'deploy' in nuki.action_ }}"
+  choices: "{{ nuki.deployments_list_ }}"
+
+deploy_items:
+  type: split
+  separator: .
+  when: "{{ 'deploy' in nuki.action_ }}"
+  input: "{{ nuki.deploy_choices_ }}"
+
+deploy_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/apply.yaml"
+  when: "{{ 'deploy' in nuki.action_ }}"
+  loop: "{{ nuki.deploy_items }}"
+  chdir: "polkadot/api/{{ nuki.item[4] }}"
+  existing_context:
+    file_system_loader: "{{ nuki.file_system_loader_ }}"
+    template_path: "{{ nuki.item[4] }}.variables.hcl.j2"
+    namespace: "{{ nuki.item[0] }}"
+    stack: "{{ nuki.item[1] }}"
+    network_name: "{{ nuki.item[2] }}"
+    environment: "{{ nuki.item[3] }}"
+    provider: "{{ nuki.item[4] }}"
+    region: "{{ nuki.item[5] }}"
+
+## Testing
+#test_env_:
+#  type: list
+#  message: Which deployment do you want to test?
+#  choices: "{{ nuki._environments }}"
+#  when: "{{ 'deploy' in nuki.action_ }}"

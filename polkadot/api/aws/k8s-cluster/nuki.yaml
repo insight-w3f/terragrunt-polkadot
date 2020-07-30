@@ -22,19 +22,9 @@ num_workers:
   when: "{{ nuki.cluster_autoscale }}"
   default: 3
 
-aws_regions_options_:
-  type: aws_regions
-  when: "{{ nuki.aws_region is not defined }}"
-
-aws_region:
-  type: list
-  message: Which AWS region?
-  choices: "{{ nuki.aws_regions_options_ }}"
-  when: "{{ nuki.aws_region is not defined }}"
-
 aws_available_instances_:
   type: aws_ec2_types
-  region: "{{ nuki.aws_region }}"
+  region: "{{ nuki.region }}"
   instance_families:
     - c5
     - m5

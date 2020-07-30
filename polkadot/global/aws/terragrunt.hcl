@@ -1,13 +1,13 @@
 locals {
-  vars = read_terragrunt_config(find_in_parent_folders("${get_parent_terragrunt_dir()}/variables.hcl"))
+  vars = read_terragrunt_config(find_in_parent_folders("variables.hcl"))
 }
 
 remote_state {
   backend = "s3"
   config = {
     encrypt = true
-    region = local.vars.locals.remote_state_region
-    key = "${local.vars.locals.remote_state_path}/${path_relative_to_include()}/terraform.tfstate"
+      region = local.vars.locals.remote_state_region
+    key = "${local.vars.locals.global_remote_state_path}/${path_relative_to_include()}/terraform.tfstate"
     bucket = "terraform-states-${get_aws_account_id()}"
     dynamodb_table = "terraform-locks-${get_aws_account_id()}"
   }
@@ -20,39 +20,24 @@ remote_state {
 
 inputs = merge(
 local.vars.locals,
-local.vars.locals.deployment_vars,
 local.vars.locals.secrets,
+local.vars.locals.deployment_vars,
 )
 
 generate "provider" {
   path = "provider.tf"
   if_exists = "skip"
   contents =<<-EOF
-variable "gcp_region" {
-  default = "us-east1"
-}
-
-provider "google" {
-  region  = var.gcp_region
-  project = var.project
-}
-
-provider "google-beta" {
-  region  = var.gcp_region
-  project = var.project
-}
-
-provider "cloudflare" {
-  version = "~> 2.0"
-}
-
 provider "aws" {
-  region = "${local.vars.locals.remote_state_region}"
+  region = "${local.vars.locals.region}"
   skip_get_ec2_platforms     = true
   skip_metadata_api_check    = true
   skip_region_validation     = true
   skip_requesting_account_id = true
 }
+
+provider "cloudflare" {
+  version = "~> 2.0"
+}
 EOF
 }
-

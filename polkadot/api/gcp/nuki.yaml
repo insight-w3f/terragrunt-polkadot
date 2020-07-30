@@ -1,0 +1,60 @@
+---
+
+#debug:
+#  type: print
+#  statement: "{{ nuki }}"
+
+
+environment_create:
+  type: list
+  message: Do you want to create a new environment or modify existing?
+  choices:
+    - name: Create new environment
+    - name: Modify existing
+
+environment_existing_list:
+  type: listdir
+  directory: polkadot/api/aws/deployments
+  when: "{{ 'Modify existing' in nuki.environment_create }}"
+
+environment_existing_list_split:
+  type: split
+  items: "{{ nuki.environment_existing_list }}"
+  separator: "-"
+  when: "{{ 'Modify existing' in nuki.environment_create }}"
+
+environment_new:
+  type: input
+  message: What do you want to call your environment (ie - dev / prod)?
+  when: "{{ 'Create new environment' in nuki.environment_create }}"
+
+network_name:
+  type: list
+  message: What network do you want to run?
+  choices:
+    - name: kusama
+    - name: mainnet
+  when: "{{ 'Create new environment' in nuki.environment_create }}"
+
+aws_regions:
+  type: aws_regions
+
+aws_regions_choice:
+  type: checkbox
+  message: Which AWS region?
+  choices: "{{ nuki.aws_regions }}"
+  when: "{{ 'Create new environment' in nuki.environment_create }}"
+
+aws_instances:
+  type: aws_ec2_types
+
+instance_choice:
+  type: list
+  message: What types of instances?
+  choices: "{{ nuki.aws_instances }}"
+  when: "{{ 'Create new environment' in nuki.environment_create }}"
+
+yaml:
+  type: yaml
+  path: output.yaml
+  contents: "{{ nuki }}"

@@ -1,4 +1,5 @@
 .idea
+.vscode/
 
 # Terraform and terragrunt
 *.tfstate/
@@ -17,7 +18,12 @@ secrets.yaml
 .circleci/.configs
 ansible_inventory.tpl
 
+!deployments/.gitkeep
+deployments/
+
 # Python
+env/
+venv/
 *.pyc
 Pipfile
 Pipfile.lock
