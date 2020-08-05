@@ -18,8 +18,8 @@ secrets.yaml
 .circleci/.configs
 ansible_inventory.tpl
 
-!deployments/.gitkeep
-deployments/
+deployments/*
+!/**/.gitkeep
 
 # Python
 env/
