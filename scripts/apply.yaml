@@ -1,21 +1,16 @@
 ---
+# Script that is called from the <stack>/<provider> nuki.yaml
 
-debug:
+apply_intro_:
+  type: print
+  statement: Applying deployment
+
+create_run_file_:
   type: yaml
-  path: debug-apply.yaml
+  path: "{{ apply.run_file_ }}"
   contents: "{{ apply }}"
+  filter: "{{ apply.settings_.deployment_id_label_order }}"
 
-render_variables_hcl_:
-  type: jinja
-  template_path: "{{ apply.template_path }}"
-  file_system_loader: "{{ apply.file_system_loader }}"
-  output_path: variables.hcl
-  extra_context: "{{ apply }}"
-
-apply_global:
+apply_:
   type: shell
   command: terragrunt apply-all --terragrunt-non-interactive
-
-#run_terragrunt_:
-#  type: shell
-#  command: terragrunt apply-all --terragrunt-non-interactive --terragrunt-exclude-dir *global

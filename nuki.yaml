@@ -1,39 +1,10 @@
-#pprint:
-#  type: pprint
-#  statement: "{{ nuki }}"
-#
-#hold:
-#  type: confirm
-#  message: hold
+---
 
-# Settings
-_environments:
-  - dev
-  - test
-  - stage
-  - prod
-
-deployments_list_:
-  type: listdir
-  path: deployments
-  ignore_hidden_files: true
-
-deployments_dir_:
-  type: find_in_parent
-  target: deployments
-
-file_system_loader_:
-  type: find_in_parent
-  target: templates
-
-scripts_dir_:
-  type: find_in_parent
-  target: scripts
-
-secrets_file_:
-  type: find_in_parent
-  target: secrets.yaml
-  fallback: NotExist
+# Install Dependencies
+settings_:
+  type: nukikata
+  context_file: scripts/settings.yaml
+  merge: true
 
 # Action
 action_:
@@ -41,60 +12,39 @@ action_:
   message: What we trying to do now?
   choices:
     - install: Install dependencies
-    - global: Set global settings
+    - profiles: Set SSH and wallet profiles
     - list: List deployments
     - create: Create deployment
     - modify: Modify Existing
-    - deploy: Deploy existing
-#    - test: Test deployment
+    - apply: Deploy existing
+    - destroy: Destroy existing
+#    - validator: Deploy a simple validator
 
 # Install Dependencies
-deps_:
-  type: checkbox
-  message: What dependencies do you want to install?
-  when: "{{ 'install' in nuki.action_ }}"
-  choices:
-    - terraform: Terraform
-    - terragrunt: Terragrunt
-    - ansible: Ansible
-    - helm: Helm
-    - kubectl: kubectl
-    - packer: Packer
-    - awscli: AWS CLI
-
 installs_:
   type: nukikata
-  template: https://github.com/insight-infrastructure/nukikata-installs
-  when: "{{ 'install' in nuki.action_ }}"
-  existing_context:
-    deps: "{{ nuki.deps_ }}"
-
-# Global Settings
-global_settings_:
-  type: checkbox
-  message: What global settings do you want to set?
-  when: "{{ 'global' in nuki.action_ }}"
-  choices:
-    - cloud-credentials: Cloud credentials
-    - ssh: Configure ssh keys
-    - dns: Configure DNS settins
-
-globals_:
-  type: nukikata
-  context_file: scripts/global.yaml
+  context_file: scripts/installs.yaml
   existing_context: "{{ nuki }}"
-  when: "{{ 'global' in nuki.action_ and nuki.global_settings_ | length > 0 }}"
+  when: "{{ 'install' in nuki.action_ }}"
+
+# Profiles
+profiles_:
+  type: nukikata
+  context_file: scripts/profiles.yaml
+  existing_context: "{{ nuki }}"
+  when: "{{ 'profiles' in nuki.action_ }}"
 
 # List Deployments
 list_:
   type: table
   column_names:
     - Namespace
-    - Stack
     - Network Name
     - Environment
     - Provider
     - Region
+    - Stack
+    - Deployment ID
   contents_split: "{{ nuki.deployments_list_ }}"
   separator: "."
   when: "{{ 'list' in nuki.action_ or 'deploy' in nuki.action_ }}"
@@ -102,60 +52,91 @@ list_:
 # Create Deployment
 create_:
   type: nukikata
-  chdir: polkadot/api
+  chdir: polkadot
   when: "{{ 'create' in nuki.action_ }}"
   existing_context: "{{ nuki }}"
-
 
 # Modify Existing
 modify_list_:
   type: checkbox
-  message: |
-    {% if nuki.deployments_list_ | length == 0 %}There are no deployments to modify {% else %}
-    Which deployment would you like to modify?{% endif %}
+  message: Which deployment would you like to modify?
   choices: "{{ nuki.deployments_list_ }}"
-  when: "{{ nuki.action_ == 'modify' }}"
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length != 0 }}"
 
+modify_warning:
+  type: print
+  statement: There are no deployments to modify
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length == 0 }}"
+  
 modify_:
   type: editor
   message: Writer
-  when: "{{ nuki.action_ == 'modify' }}"
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length != 0 }}"
+  loop: "{{ nuki.modify_list_ }}"
   eargs:
+    filename: "deployments/{{ nuki.item }}"
     editor: nano
     ext: .yaml
+    save: true
 
-# Deploy
-deploy_choices_:
+# Apply
+apply_choices_:
   type: checkbox
   message: Which deployments would you like to apply?
-  when: "{{ 'deploy' in nuki.action_ }}"
+  when: "{{ 'apply' in nuki.action_ }}"
   choices: "{{ nuki.deployments_list_ }}"
 
-deploy_items:
+apply_items_:
   type: split
   separator: .
-  when: "{{ 'deploy' in nuki.action_ }}"
-  input: "{{ nuki.deploy_choices_ }}"
+  when: "{{ 'apply' in nuki.action_ }}"
+  input: "{{ nuki.apply_choices_ }}"
 
-deploy_:
+apply_:
   type: nukikata
-  context_file: "{{ nuki.scripts_dir_ }}/apply.yaml"
-  when: "{{ 'deploy' in nuki.action_ }}"
-  loop: "{{ nuki.deploy_items }}"
-  chdir: "polkadot/api/{{ nuki.item[4] }}"
+  context_file: "{{ nuki.scripts_dir_ }}/run.yaml"
+  when: "{{ 'apply' in nuki.action_ }}"
+  loop: "{{ nuki.apply_items_ }}"
   existing_context:
-    file_system_loader: "{{ nuki.file_system_loader_ }}"
-    template_path: "{{ nuki.item[4] }}.variables.hcl.j2"
     namespace: "{{ nuki.item[0] }}"
-    stack: "{{ nuki.item[1] }}"
-    network_name: "{{ nuki.item[2] }}"
+    network_name: "{{ nuki.item[1] }}"
+    provider: "{{ nuki.item[2] }}"
     environment: "{{ nuki.item[3] }}"
-    provider: "{{ nuki.item[4] }}"
-    region: "{{ nuki.item[5] }}"
+    region: "{{ nuki.item[4] }}"
+    stack: "{{ nuki.item[5] }}"
+    deployment_id: "{{ nuki.item[6] }}"
+    action: apply
 
-## Testing
-#test_env_:
-#  type: list
-#  message: Which deployment do you want to test?
-#  choices: "{{ nuki._environments }}"
-#  when: "{{ 'deploy' in nuki.action_ }}"
+# Destroy
+destroy_choices_:
+  type: checkbox
+  message: Which deployments would you like to destroy?
+  when: "{{ 'destroy' in nuki.action_ }}"
+  choices: "{{ nuki.deployments_list_ }}"
+
+destroy_items_:
+  type: split
+  separator: .
+  when: "{{ 'destroy' in nuki.action_ }}"
+  input: "{{ nuki.destroy_choices_ }}"
+
+destroy_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/run.yaml"
+  when: "{{ 'destroy' in nuki.action_ }}"
+  loop: "{{ nuki.destroy_items_ }}"
+  existing_context:
+    namespace: "{{ nuki.item[0] }}"
+    network_name: "{{ nuki.item[1] }}"
+    provider: "{{ nuki.item[2] }}"
+    environment: "{{ nuki.item[3] }}"
+    region: "{{ nuki.item[4] }}"
+    stack: "{{ nuki.item[5] }}"
+    deployment_id: "{{ nuki.item[6] }}"
+    action: destroy

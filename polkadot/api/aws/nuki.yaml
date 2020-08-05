@@ -4,23 +4,11 @@ version_:
   type: yaml
   path: versions.yaml
 
-provider:
-  type: stat
-  input: aws
-
 region:
   type: stat
-  input: "{{ nuki.item }}"
+  input: "{{ nuki.aws_region }}"
 
-# Configs
-#global_:
-#  type: nukikata
-#  merge: true
-#  template: https://github.com/insight-w3f/terraform-polkadot-aws-network
-#  checkout: "{{ nuki.version_[nuki.environment]['network'] }}"
-#  existing_context: "{{ nuki }}"
-#  when: "{{ nuki.index == 0 }}"
-
+# Network
 network_:
   type: nukikata
   merge: true
@@ -28,12 +16,14 @@ network_:
   checkout: "{{ nuki.version_[nuki.environment]['network'] }}"
   existing_context: "{{ nuki }}"
 
+# K8s cluster
 k8s-cluster:
   type: nukikata
   merge: true
   chdir: k8s-cluster
   existing_context: "{{ nuki }}"
 
+# Autoscaling Group
 asg:
   type: nukikata
   merge: true
@@ -41,6 +31,7 @@ asg:
   checkout: "{{ nuki.version_[nuki.environment]['asg'] }}"
   existing_context: "{{ nuki }}"
 
+# K8s Config
 k8s-config:
   type: nukikata
   merge: true
@@ -48,26 +39,11 @@ k8s-config:
   checkout: "{{ nuki.version_[nuki.environment]['k8s-config'] }}"
   existing_context: "{{ nuki }}"
 
-# Write the deployment file
-deployment_exists_:
-  type: path_exists
-  path: deployments/polkadot.api.{{configure.network_name}}.{{configure.environment}}.{{configure.provider}}.{{configure.region}}.yaml
-
-deployment_overwrite_:
-  type: confirm
-  message: |
-    Do you want to overwrite the existing polkadot.api.{{configure.network_name}}.{{configure.environment}}.{{configure.region}}
-    deployment? - will exit program ->
-  when: "{{ configure.deployment_exists_ }}"
-
-deployment_write_:
-  type: yaml
-  loop: "{{ nuki.aws_regions_ }}"
-  path: "{{nuki.deployments_dir_}}/polkadot.api.{{nuki.network_name}}.{{nuki.environment}}.{{nuki.item}}.yaml"
-  contents: "{{ nuki }}"
-  remove:
-    - ^_
-    - _$
+# Write Deployment
+write_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/write.yaml"
+  existing_context: "{{ nuki }}"
 
 # Apply
 apply_confirm_:
@@ -77,15 +53,5 @@ apply_confirm_:
 apply_:
   type: nukikata
   context_file: "{{ nuki.scripts_dir_ }}/apply.yaml"
-  loop: "{{ nuki.aws_regions_ }}"
   when: "{{ nuki.apply_confirm_ }}"
-  existing_context:
-    template_path: "{{ nuki.provider }}.variables.hcl.j2"
-    file_system_loader: "{{ nuki.file_system_loader_ }}"
-    namespace: "{{ nuki.namespace }}"
-    stack: "{{ nuki.stack }}"
-    network_name: "{{ nuki.network_name }}"
-    environment: "{{ nuki.environment }}"
-    provider: "{{ nuki.provider }}"
-    region: "{{ nuki.region }}"
-
+  existing_context: "{{ nuki }}"

@@ -30,6 +30,6 @@ aws_available_instances_:
     - m5
 
 worker_instance_type:
-  type: list
+  type: select
   message: What type of worker instances do you want to create?
   choices: "{{ nuki.aws_available_instances_ }}"

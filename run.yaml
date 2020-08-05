@@ -1,7 +1,0 @@
-namespace: "polkadot"
-network_name: "kusama"
-environment: "dev"
-provider: "aws"
-region: "eu-north-1"
-stack: "api"
-deployment_id: 1

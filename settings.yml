@@ -1,0 +1,26 @@
+deployment_id_label_order:
+  - namespace
+  - network_name
+  - provider
+  - environment
+  - region
+  - stack
+  - deployment_id
+
+remote_state_path_label_order:
+  - namespace
+  - stack
+  - provider
+  - network_name
+  - environment
+  - region
+
+id_label_order:
+  - namespace
+  - stack
+  - network_name
+  - environment
+
+name_label_order:
+  - stack
+  - network_name

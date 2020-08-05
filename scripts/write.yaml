@@ -1,0 +1,51 @@
+---
+# Write the deployment file to the `deployments` directory
+
+write_intro_:
+  type: print
+  statement: Writing deployment
+
+deployment_keys_:
+  type: stat
+  loop: "{{ write.settings_.deployment_id_label_order }}"
+  input: "{{ write[write.item] }}"
+
+deployment_path_:
+  type: join
+  input: "{{ write.deployment_keys_ }}"
+
+deployment_file_:
+  type: stat
+  input: "{{write.deployments_dir_}}/{{write.deployment_path_}}.yaml"
+
+deployment_exists_:
+  type: path_exists
+  path: "{{ write.deployment_file_ }}"
+
+deployment_overwrite_confirm_:
+  type: confirm
+  message: |
+    Do you want to overwrite the existing polkadot.api.{{write.network_name}}.{{write.environment}}.{{write.region}}
+    deployment? - will exit program ->
+  when: "{{ write.deployment_exists_ }}"
+
+deployment_write_:
+  type: yaml
+  path: "{{ write.deployment_file_ }}"
+  contents: "{{ write }}"
+  remove:
+    - ^_
+    - _$
+  when:
+    - "{{ not write.deployment_exists_ }}"
+
+deployment_overwrite_:
+  type: yaml
+  path: "{{ write.deployment_file_ }}"
+  contents: "{{ write }}"
+  remove:
+    - ^_
+    - _$
+  when:
+    - "{{ write.deployment_overwrite_confirm_ is defined }}"
+    - "{{ write.deployment_overwrite_confirm_ }}"

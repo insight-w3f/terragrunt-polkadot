@@ -1,0 +1,52 @@
+---
+# Settings that are consistent across the project
+
+_environments:
+  - dev
+  - test
+  - stage
+  - prod
+
+deployments_list_:
+  type: listdir
+  path: deployments
+  ignore_hidden_files: true
+
+deployments_dir_:
+  type: find_in_parent
+  target: deployments
+
+scripts_dir_:
+  type: find_in_parent
+  target: scripts
+
+secrets_file_:
+  type: find_in_parent
+  target: secrets.yml
+  fallback: NotExist
+
+secrets_file_write_:
+  type: yaml
+  path: secrets.yml
+  when: "{{ settings.secrets_file_ == 'NotExist' }}"
+  contents:
+    cloud_profiles:
+      aws: []
+      azure: []
+      do: []
+      gcp: []
+    ssh_profiles: []
+    wallet_profiles: []
+  
+settings_:
+  type: yaml
+  path: settings.yml
+
+# Always called from root
+base_directory_:
+  type: stat
+  input: "{{ cwd }}"
+  
+run_file_:
+  type: stat
+  input: "{{ cwd }}/run.yml"
