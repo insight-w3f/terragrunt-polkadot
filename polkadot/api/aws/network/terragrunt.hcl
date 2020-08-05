@@ -7,7 +7,7 @@ include {
 }
 
 locals {
-  vars = read_terragrunt_config(find_in_parent_folders("variables.hcl")).locals
+  vars = read_terragrunt_config(find_in_parent_folders("common.hcl")).locals
 }
 
 inputs = {

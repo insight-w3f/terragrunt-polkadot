@@ -41,8 +41,8 @@ locals {
     region = local.region
   }
 
-  remote_state_path_label_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
-  remote_state_path = join("/", [ for i in local.remote_state_path_label_order : lookup(local.label_map, i)])
+  remote_state_path_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
+  remote_state_path = join("/", [ for i in local.remote_state_path_order : lookup(local.label_map, i)])
 
   id_label_order = ["namespace", "stack", "network_name", "environment"]
   id = join("-", [ for i in local.id_label_order : lookup(local.label_map, i)])
@@ -50,5 +50,5 @@ locals {
   name_label_order = ["stack", "network_name"]
   name = join("", [ for i in local.name_label_order : title(lookup(local.label_map, i))])
 
-  tags = { for t in local.remote_state_path_label_order : t => lookup(local.label_map, t) }
+  tags = { for t in local.remote_state_path_order : t => lookup(local.label_map, t) }
 }

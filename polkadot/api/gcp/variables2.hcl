@@ -43,8 +43,8 @@ locals {
   # Label Boilerplate
   ###################
 
-  remote_state_path_label_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
-  remote_state_path = join("/", [ for i in local.remote_state_path_label_order : lookup(local.deployment_map, i)])
+  remote_state_path_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
+  remote_state_path = join("/", [ for i in local.remote_state_path_order : lookup(local.deployment_map, i)])
 
   id_label_order = ["namespace", "stack", "network_name", "environment"]
   global_id = join("-", [ for i in local.id_label_order : lookup(local.deployment_map, i)])
@@ -55,5 +55,5 @@ locals {
   short_id_label_order = ["stack", "network_name", "environment"]
   global_short_id = join("-", [ for i in local.short_id_label_order : lower(lookup(local.deployment_map, i))])
 
-  tags = { for t in local.remote_state_path_label_order : t => lookup(local.deployment_map, t) }
+  tags = { for t in local.remote_state_path_order : t => lookup(local.deployment_map, t) }
 }
