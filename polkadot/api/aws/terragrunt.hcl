@@ -10,7 +10,7 @@ local.vars.deployment_vars,
 )
 
 generate "provider" {
-  path = "provider.tf"
+  path = "tg-provider.tf"
   if_exists = "skip"
   contents =<<-EOF
 provider "aws" {

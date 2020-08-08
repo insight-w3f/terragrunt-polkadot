@@ -1,4 +1,8 @@
+---
 
+print_:
+  type: print
+  statement: Configuring Polkadot AWS Kubernetes Cluster
 
 cluster_autoscale:
   type: confirm
