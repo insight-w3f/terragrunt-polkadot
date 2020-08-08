@@ -26,7 +26,16 @@ By walking through the steps in the CLI, users should be able to fully customize
 
 ## Deployment Process 
 
-
+1. Set deployment variables - ie namespace, network name, etc. 
+1. Set the region per the could provider 
+1. Configure stack level parameters. 
+    - Each associated terraform module is cloned 
+    - Relevant parameters are prompted per the `nuki.yaml` file in the module
+    - Versions of each module are pulled from a `versions.yaml` file in each stack 
+1. Deployment file and `run.yml` file are written to the `deployments` directory and root 
+1. A `terragrunt apply-all` is run which traverses across all the modules
+    - The logic for this call is routed through a `variables.hcl` file to set all the parameters 
+    - The `terragrunt.hcl` file then assembles the remote state path for each deployment 
 
 ### Run File, Deployment ID, and Remote State  
 
@@ -56,9 +65,10 @@ region: "us-east-1"
 stack: "validator-simple"
 deployment_id: 1  # Something to discriminate between deployments - ie blue/green
 ```
+
 **Deployment File:**
 
-`terragrunt-harmony/deployments/harmony.mainnet.prod.aws.us-east-1.validator.1.yaml`
+`terragrunt-polkadot/deployments/polkadot.mainnet.prod.aws.us-east-1.validator.1.yaml`
 
 Deployment files are created locally by the nukikata CLI in the `deployments` directory and are referenced in each
  deployment run via the `run.yaml` which references the deployment file. 
@@ -66,12 +76,10 @@ Deployment files are created locally by the nukikata CLI in the `deployments` di
 
 **Remote State:**
 
-`s3://.../<bucket>/harmony/mainnet/prod/aws/us-east-1/validator/1/terraform.tfstate`
+`s3://.../<bucket>/polkadot/mainnet/prod/aws/us-east-1/validator/1/terraform.tfstate`
 
 The remote state bucket and path are created and managed for you by terragrunt. This is where the state of all the
  deployments is kept and can be referenced in subsequent deployments.  
-
-
 
 ### How it works 
 
@@ -92,10 +100,9 @@ A critical element in understanding the deployment methodology is understanding 
  "deployment centric" approach where each deployment consists of a file per namespace, stack, network name, environment
  , and cloud provider region to hold all the parameters needed to inform a properly running stack. These files are
  currently stored locally in the `deployments` folder within each provider and soon, users will have the option of
- storing the files and running the stack remotely. To run the deployment, we template the parent `terragrun.hcl` file
-  with the proper parameters that we need to deploy and then run terragrunt to deploy the infrastructure. Currently
-   deployments are executed sequentially and in the future the user will be able to deploy to multiple regions in
-    parallel. 
+ storing the files and running the stack remotely. To run the deployment, we write a new `run.yml` file that points
+  to a deployments file. Currently deployments are executed sequentially and in the future the user will be able to
+   deploy to multiple regions in parallel. 
   
 To manage this complex process, we developed nukikata as we felt that managing a declarative CLI in this context
  would be more manageable as an organization.  We also want to make sure to allow features to be used across multiple
@@ -165,6 +172,5 @@ Kubernetes is used for monitoring with prometheus, and logging with elasticsearc
 ### General 
 - [terraform-ansible-playbook](https://github.com/insight-infrastructure/terraform-aws-ansible-playbook) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-aws-ansible-playbook?style=svg)
 - [terraform-packer-build](https://github.com/insight-infrastructure/terraform-packer-build) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-packer-build?style=svg)
-
 
 ![](./static/w3f_badge.png)
