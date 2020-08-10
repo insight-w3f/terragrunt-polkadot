@@ -1,0 +1,16 @@
+---
+# Script that is called from the <stack>/<provider> nuki.yaml
+
+apply_intro_:
+  type: print
+  statement: Applying deployment
+
+create_run_file_:
+  type: yaml
+  path: "{{ apply.run_file_ }}"
+  contents: "{{ apply }}"
+  filter: "{{ apply.settings_.deployment_id_label_order }}"
+
+apply_:
+  type: shell
+  command: terragrunt apply-all --terragrunt-non-interactive

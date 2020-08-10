@@ -25,7 +25,11 @@ dependency "cluster" {
 }
 
 inputs = {
-  security_groups = [dependency.network.outputs.sentry_security_group_id]
+  security_groups = [
+    dependency.network.outputs.api_security_group_id,
+    dependency.network.outputs.consul_security_group_id,
+    dependency.network.outputs.monitoring_security_group_id,
+  ]
   subnet_ids = dependency.network.outputs.public_subnets
   vpc_id = dependency.network.outputs.vpc_id
   cluster_name = dependency.cluster.outputs.cluster_id

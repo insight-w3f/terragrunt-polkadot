@@ -1,0 +1,48 @@
+---
+# Script to install dependencies
+
+installs_intro_:
+  type: print
+  statement: Installing software
+
+action:
+  type: select
+  message: Do you want to manually select dependencies or simply install all of them?
+  choices:
+    - auto: Install all of them
+    - manual: Selectively install
+
+auto_deps:
+  type: stat
+  when:
+    - "{{ installs.action == 'auto' }}"
+  input:
+    deps:
+      - blockchain-tools
+      - devops
+    polkadot_deps:
+      - subkey
+    blockchain_deps:
+      - polkadot
+    devops_deps:
+      - terragrunt
+      - terraform
+      - blockchain-tools
+      - helm
+      - kubectl
+      - aws-iam-authenticator
+      - ansible
+      - awscli
+
+auto_installs:
+  type: nukikata
+  template: https://github.com/insight-infrastructure/nukikata-installs
+  existing_context:
+    deps: "{{ installs.auto_deps }}"
+  when: "{{ 'auto' == installs.action }}"
+
+manual_installs:
+  type: nukikata
+  template: https://github.com/insight-infrastructure/nukikata-installs
+  when: "{{ 'manual' == installs.action }}"
+#  existing_context: "{{ installs.manual_deps }}"

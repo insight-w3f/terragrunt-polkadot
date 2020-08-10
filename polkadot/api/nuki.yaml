@@ -1,0 +1,51 @@
+---
+
+# Providers
+provider:
+  type: select
+  message: What cloud providers do you want to deploy on?
+  choices:
+    - aws: AWS
+    - azure: Azure
+    - do: DigitalOcean
+    - gcp: GCP
+
+secrets_read_:
+  type: nukikata
+  merge: true
+  context_file: "{{ nuki.scripts_dir_ }}/secrets.yaml"
+  existing_context: "{{ nuki }}"
+
+cluster_name:
+  type: input
+  message: What do you want to call your cluster?
+  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
+
+# Regions
+## Aws
+aws_provider:
+  type: nukikata
+  chdir: aws
+  when: "{{ nuki.provider == 'aws' }}"
+  existing_context: "{{ nuki }}"
+
+# GCP
+gcp_provider:
+  type: nukikata
+  chdir: gcp
+  existing_context: "{{ nuki }}"
+  when: "{{ nuki.provider == 'gcp' }}"
+
+# Azure
+azure_provider:
+  type: nukikata
+  chdir: azure
+  when: "{{ nuki.provider == 'azure' }}"
+  existing_context: "{{ nuki }}"
+
+# DigitalOcean
+do_provider:
+  type: nukikata
+  chdir: do
+  existing_context: "{{ nuki }}"
+  when: "{{ nuki.provider == 'do' }}"

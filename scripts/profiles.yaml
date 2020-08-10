@@ -1,0 +1,100 @@
+---
+# Script to set secrets profiles.
+#
+# - Secrets profiles exist in secrets.yml files at the root
+# - They have several fields that have keys that produce a list of profiles.
+# - These profiles all have a `name` that is the id of the profile that is looked when applying or destroying.
+
+profiles_intro_:
+  type: print
+  statement: Configuring SSH and wallet profiles
+
+choice_:
+  type: checkbox
+  message: Which profiles would you like to set?
+  choices:
+    - docs: Open docs to explain this
+    - ssh: SSH keys
+#    - wallet: Wallets
+#    - dns: DNS settings
+#    - cloud: Cloud credentials
+
+# SSH
+docs:
+  type: webbrowser
+  when: "{{ 'docs' in profiles.choice_ }}"
+  url: https://www.notion.so/insightx/Introductory-Tutorials-0416f96a30ee485f9e30c3a75b4910bf
+
+ssh_profile_name_:
+  type: input
+  message: What do you want to call you SSH profile?
+  when: "{{ 'ssh' in profiles.choice_ }}"
+  
+ssh_options_:
+  type: select
+  message: How would you like to configure your SSH key?
+  when: "{{ 'ssh' in profiles.choice_ }}"
+  choices:
+    - ssh-keygen: Generate new SSH Keys
+    - ssh-path: Set path to SSH keys
+
+## SSH Path
+
+ssh_public_key_path_:
+  type: input
+  message: What path is your public ssh key?
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-path' }}"
+  default: "$HOME/.ssh/"
+
+ssh_private_key_path_:
+  type: input
+  message: What path is your private ssh key?
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-path' }}"
+  default: "{{ profiles.ssh_public_key_path_ }}"
+
+ssh_path_add_:
+  type: yaml
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-path' }}"
+  path: "{{ profiles.secrets_file_ }}"
+  in_place: true
+  append_items:
+    - name: "{{ profiles.ssh_profile_name_ }}"
+      public_key_path: "{{ profiles.ssh_public_key_path_ }}"
+      private_key_path: "{{ profiles.ssh_private_key_path_ }}"
+  append_keys: ssh_profiles
+
+## SSH Generate
+ssh_keygen_path_:
+  type: input
+  message: What path to generate the ssh key?
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-keygen' }}"
+  default: "~/.ssh/{{ profiles.ssh_profile_name_ }}"
+
+ssh_keygen_:
+  type: command
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-keygen' }}"
+  command: |
+    ssh-keygen -t rsa -b 4096 -f {{ profiles.ssh_keygen_path_ }}
+
+ssh_keygen_add_:
+  type: yaml
+  when:
+    - "{{ 'ssh' in profiles.choice_ }}"
+    - "{{ profiles.ssh_options_ == 'ssh-keygen' }}"
+  path: "{{ profiles.secrets_file_ }}"
+  in_place: true
+  append_items:
+    - name: "{{ profiles.ssh_profile_name_ }}"
+      public_key_path: "{{ profiles.ssh_keygen_path_ }}.pub"
+      private_key_path: "{{ profiles.ssh_keygen_path_ }}"
+  append_keys: ssh_profiles

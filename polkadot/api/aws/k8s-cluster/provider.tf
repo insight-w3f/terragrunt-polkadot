@@ -1,9 +1,11 @@
 data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
+  name = join("", aws_eks_cluster.this.*.id)
+//  name = var.cluster_name
 }
 
 data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
+  //  name = var.cluster_name
+  name = join("", aws_eks_cluster.this.*.id)
 }
 
 provider "kubernetes" {

@@ -1,0 +1,141 @@
+---
+
+# Install Dependencies
+settings_:
+  type: nukikata
+  context_file: scripts/settings.yaml
+  merge: true
+
+# Action
+action_:
+  type: checkbox
+  message: What we trying to do now?
+  choices:
+    - install: Install dependencies
+    - profiles: Set SSH and wallet profiles
+    - list: List deployments
+    - create: Create new deployment
+    - modify: Modify deployment
+    - apply: Apply deployment
+    - destroy: Destroy deployment
+
+# Install Dependencies
+installs_:
+  type: nukikata
+  context_file: scripts/installs.yaml
+  existing_context: "{{ nuki }}"
+  when: "{{ 'install' in nuki.action_ }}"
+
+# Profiles
+profiles_:
+  type: nukikata
+  context_file: scripts/profiles.yaml
+  existing_context: "{{ nuki }}"
+  when: "{{ 'profiles' in nuki.action_ }}"
+
+# List Deployments
+list_:
+  type: table
+  column_names:
+    - Namespace
+    - Network Name
+    - Environment
+    - Provider
+    - Region
+    - Stack
+    - Deployment ID
+  contents_split: "{{ nuki.deployments_list_ }}"
+  separator: "."
+  when: "{{ 'list' in nuki.action_ or 'deploy' in nuki.action_ }}"
+
+# Create Deployment
+create_:
+  type: nukikata
+  chdir: polkadot
+  when: "{{ 'create' in nuki.action_ }}"
+  existing_context: "{{ nuki }}"
+
+# Modify Existing
+modify_list_:
+  type: checkbox
+  message: Which deployment would you like to modify?
+  choices: "{{ nuki.deployments_list_ }}"
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length != 0 }}"
+
+modify_warning:
+  type: print
+  statement: There are no deployments to modify
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length == 0 }}"
+  
+modify_:
+  type: editor
+  message: Writer
+  when:
+    - "{{ 'modify' in nuki.action_ }}"
+    - "{{ nuki.deployments_list_ | length != 0 }}"
+  loop: "{{ nuki.modify_list_ }}"
+  eargs:
+    filename: "deployments/{{ nuki.item }}"
+    editor: nano
+    ext: .yaml
+    save: true
+
+# Apply
+apply_choices_:
+  type: checkbox
+  message: Which deployments would you like to apply?
+  when: "{{ 'apply' in nuki.action_ }}"
+  choices: "{{ nuki.deployments_list_ }}"
+
+apply_items_:
+  type: split
+  separator: .
+  when: "{{ 'apply' in nuki.action_ }}"
+  input: "{{ nuki.apply_choices_ }}"
+
+apply_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/run.yaml"
+  when: "{{ 'apply' in nuki.action_ }}"
+  loop: "{{ nuki.apply_items_ }}"
+  existing_context:
+    namespace: "{{ nuki.item[0] }}"
+    network_name: "{{ nuki.item[1] }}"
+    provider: "{{ nuki.item[2] }}"
+    environment: "{{ nuki.item[3] }}"
+    region: "{{ nuki.item[4] }}"
+    stack: "{{ nuki.item[5] }}"
+    deployment_id: "{{ nuki.item[6] }}"
+    action: apply
+
+# Destroy
+destroy_choices_:
+  type: checkbox
+  message: Which deployments would you like to destroy?
+  when: "{{ 'destroy' in nuki.action_ }}"
+  choices: "{{ nuki.deployments_list_ }}"
+
+destroy_items_:
+  type: split
+  separator: .
+  when: "{{ 'destroy' in nuki.action_ }}"
+  input: "{{ nuki.destroy_choices_ }}"
+
+destroy_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/run.yaml"
+  when: "{{ 'destroy' in nuki.action_ }}"
+  loop: "{{ nuki.destroy_items_ }}"
+  existing_context:
+    namespace: "{{ nuki.item[0] }}"
+    network_name: "{{ nuki.item[1] }}"
+    provider: "{{ nuki.item[2] }}"
+    environment: "{{ nuki.item[3] }}"
+    region: "{{ nuki.item[4] }}"
+    stack: "{{ nuki.item[5] }}"
+    deployment_id: "{{ nuki.item[6] }}"
+    action: destroy

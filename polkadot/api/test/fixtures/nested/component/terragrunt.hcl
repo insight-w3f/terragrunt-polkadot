@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-polkadot-gcp-network.git?ref=${local.vars.versions.network}"
+  source = "."
 }
 
 include {
@@ -11,6 +11,5 @@ locals {
 }
 
 inputs = {
-  vpc_name = local.vars.short_id
-  az_num = 1
+  any = local.vars
 }

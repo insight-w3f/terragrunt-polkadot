@@ -21,7 +21,6 @@ dependency "network" {
 
 inputs = {
   vpc_name = dependency.network.outputs.public_vpc_name
-  cluster_name = local.vars.global_short_id
-  worker_instance_type = "n1-standard-2"
+  cluster_name = local.vars.short_id
   kubernetes_subnet = dependency.network.outputs.kubernetes_subnet
 }

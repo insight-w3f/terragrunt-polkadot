@@ -1,0 +1,26 @@
+---
+# Script that is called from the root nuki.yaml to apply or destroy
+
+run_intro_:
+  type: print
+  statement: "{{ run.action }}ing deployment"
+
+create_run_file_:
+  type: yaml
+  path: run.yml
+  remove:
+    - action
+    - ^_
+  contents: "{{ run }}"
+
+apply_:
+  type: shell
+  when: "{{ run.action == 'apply' }}"
+  chdir: "polkadot/{{ run.stack }}/{{ run.provider }}"
+  command: terragrunt apply-all --terragrunt-non-interactive --terragrunt-source-update
+
+destroy_:
+  type: shell
+  when: "{{ run.action == 'destroy' }}"
+  chdir: "polkadot/{{ run.stack }}/{{ run.provider }}"
+  command: terragrunt destroy-all --terragrunt-non-interactive --terragrunt-ignore-dependency-errors

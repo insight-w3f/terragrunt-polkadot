@@ -1,0 +1,46 @@
+# Stack
+stack:
+  type: select
+  message: What type of stack do you want to run?
+  choices:
+    - api: API clusters
+#    - api-simple: Super simple private API endpoint
+#    - monitor: Network monitoring tools
+#    - validator: Advanced validator
+#    - validator-simple: Super simple validator
+
+# Namespace
+namespace:
+  type: input
+  message: What do you want to call your namespace?
+  default: polkadot
+
+# Network Name
+network_name:
+  type: select
+  message: What network do you want to run on?
+  choices:
+    - kusama: Kusama
+    - mainnet: Mainnet
+
+# Environment
+environment:
+  type: select
+  message: What type of environment do you want to create?
+  choices:
+    - dev
+    - test
+    - stage
+    - prod
+
+# Deployment ID
+deployment_id:
+  type: input
+  message: What deployment id do you want to make?
+  default: 1
+
+# Call the stack
+stack_call_:
+  type: nukikata
+  chdir: "{{ nuki.stack }}"
+  existing_context: "{{ nuki }}"

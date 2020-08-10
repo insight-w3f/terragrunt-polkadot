@@ -1,5 +1,10 @@
 terraform {
   source = "github.com/insight-w3f/terraform-polkadot-k8s-config.git?ref=${local.vars.versions.k8s-config}"
+
+  before_hook "update_kubeconfig" {
+    commands     = ["apply", "plan", "destroy"]
+    execute      = split(" ", "aws eks --region ${local.vars.run.region} update-kubeconfig --name ${local.vars.deployment_vars.cluster_name}")
+  }
 }
 
 include {
@@ -29,6 +34,15 @@ dependency "network" {
   config_path = local.network
 }
 
+inputs = {
+  cluster_id = dependency.cluster.outputs.cluster_id
+  cloud_platform = local.vars.run.provider
+  lb_endpoint = dependency.asg.outputs.dns_name
+  aws_worker_arn = dependency.cluster.outputs.worker_iam_role_arn
+  deployment_domain_name = dependency.network.outputs.public_regional_domain
+  kubeconfig = base64encode(dependency.cluster.outputs.kubeconfig)
+}
+
 generate "provider" {
   path = "kubernetes.tf"
   if_exists = "overwrite"
@@ -38,7 +52,7 @@ data "aws_eks_cluster_auth" "this" {
 }
 
 provider "aws" {
-  region = "${local.vars.region}"
+  region = "${local.vars.run.region}"
   skip_get_ec2_platforms     = true
   skip_metadata_api_check    = true
   skip_region_validation     = true
@@ -64,12 +78,3 @@ provider "kubernetes" {
 EOF
 }
 
-
-inputs = {
-  cluster_id = dependency.cluster.outputs.cluster_id
-  cloud_platform = local.vars.provider
-  lb_endpoint = dependency.asg.outputs.dns_name
-  aws_worker_arn = dependency.cluster.outputs.worker_iam_role_arn
-  deployment_domain_name = dependency.network.outputs.public_regional_domain
-  kubeconfig = base64encode(dependency.cluster.outputs.kubeconfig)
-}

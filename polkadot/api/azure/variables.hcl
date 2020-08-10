@@ -1,54 +1,20 @@
 locals {
-  ######################
-  # Deployment Variables
-  ######################
-  namespace = "polkadot"
-  stack = "api"
-  provider = "azure"
-  network_name = "kusama"
-  environment = "dev"
-  region = "eastus" # location
+  # Read the nearest files
+  run = yamldecode(file(find_in_parent_folders("run.yml"))) # input
+  settings = yamldecode(file(find_in_parent_folders("settings.yml")))
+  secrets = yamldecode(file(find_in_parent_folders("secrets.yml")))
+  versions = yamldecode(file("versions.yaml"))[local.run.environment]
 
-  remote_state_region = "us-east-1"
+  # Inputs
+  deployment_id = join(".", [ for i in local.settings.deployment_id_label_order : lookup(local.run, i)])
+  deployment_vars = yamldecode(file("${find_in_parent_folders("deployments")}/${local.deployment_id}.yaml"))
+  ssh_profile = local.secrets.ssh_profiles[index(local.secrets.ssh_profiles.*.name, local.deployment_vars.ssh_profile_name)]
 
-  azure_resource_group_name = local.id
-  create_public_regional_subdomain = true
-  consul_enabled = true
-  monitoring_enabled = true
-  prometheus_enabled = true
+  # Common labels
+  id = join("-", [ for i in local.settings.id_label_order : lookup(local.run, i)])
+  name = join("", [ for i in local.settings.name_label_order : title(lookup(local.run, i))])
+  tags = { for t in local.settings.remote_state_path_label_order : t => lookup(local.run, t) }
 
-  ###################
-  # Environment Logic
-  ###################
-  env_vars = {
-    dev = {}
-    prod = {}
-  }[local.environment]
-
-  # Imports
-  versions = yamldecode(file("${get_parent_terragrunt_dir()}/versions.yaml"))[local.environment]
-  secrets = yamldecode(file("${get_parent_terragrunt_dir()}/secrets.yaml"))[local.environment]
-
-  ###################
-  # Label Boilerplate
-  ###################
-  label_map = {
-    namespace = local.namespace
-    stack = local.stack
-    provider = local.provider
-    network_name = local.network_name
-    environment = local.environment
-    region = local.region
-  }
-
-  remote_state_path_label_order = ["namespace", "stack", "provider", "network_name", "environment", "region"]
-  remote_state_path = join("/", [ for i in local.remote_state_path_label_order : lookup(local.label_map, i)])
-
-  id_label_order = ["namespace", "stack", "network_name", "environment"]
-  id = join("-", [ for i in local.id_label_order : lookup(local.label_map, i)])
-
-  name_label_order = ["stack", "network_name"]
-  name = join("", [ for i in local.name_label_order : title(lookup(local.label_map, i))])
-
-  tags = { for t in local.remote_state_path_label_order : t => lookup(local.label_map, t) }
+  # Remote State
+  remote_state_path = join("/", [ for i in local.settings.remote_state_path_label_order : lookup(local.run, i)])
 }
