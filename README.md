@@ -5,11 +5,34 @@ This is a reference architecture for deploying API nodes for Polkadot. Users can
  [Load Balanced Endpoints](https://github.com/w3f/Web3-collaboration/pull/250) grant proposal and is intended to be a
  long term development project where new features and optimizations will be built in over time. 
 
-Currently the API nodes themselves run on VMs with the supporting infrastructure running on kubernetes. In the future
- , options will be exposed to run the on either VMs, k8s, or some unique combination of both depending on what your
+Currently the API nodes themselves run on VMs with the supporting infrastructure running on kubernetes. In the future, 
+options will be exposed to run the on either VMs, k8s, or some unique combination of both depending on what your
  infrastructure needs are. 
 
-### Getting started 
+## Deploying the Stack 
+
+The process involves three steps. 
+
+1. Setting up accounts, projects, and API keys on each provider. 
+1. Run the CLI to configure the necessary files and ssh keys. 
+1. Run the deployment 
+
+### Cloud Providers  
+
+Before running on any cloud, signup and provide payment details to create an active account and project in GCP. You will 
+need API keys to any provider that you intend on running on on. For a walkthrough on each provider, please check the
+ following links for setting up your cloud accounts. 
+ 
+ - [AWS](https://www.notion.so/insightx/AWS-API-Keys-Tutorial-175fa12e9b5b43509235a97fca275653)
+ - [GCP](https://www.notion.so/insightx/GCP-API-Keys-Tutorial-f4a265539a6b47eeb5a6fc01a0ba3a77)
+ - [Azure](https://www.notion.so/insightx/Azure-API-Keys-Tutorial-WIP-421b0f86bc0d4eff959466252ef92e4e)
+ - [DigitalOcean](https://www.notion.so/insightx/DigitalOcean-API-Keys-Tutorial-WIP-9293f131a060434ab1bc409d25bf0e73)
+ - [Cloudflare]() - Only for if using geo routing 
+
+All cloud providers are on feature parity except for DigitalOcean which does not have native autoscaling capabilities
+. For now we have a kubernetes deployment that will run a helm chart with a cluster autoscaling capability. 
+
+### Deployment Setup and CLI 
 
 To get started with an interactive CLI to configure node deployments: 
 
@@ -21,8 +44,59 @@ nukikata .
 ```
 
 By walking through the steps in the CLI, users should be able to fully customize the deployment of the cluster in any
- cloud provider. Configuration settings are self-documented in the CLI or can be done manually by editing the
-  deployment files per the architecture described below. 
+ cloud provider. There are three key steps, installing prerequisites, configuring ssh keys, and setting up the stack
+ .  Each step can be done in the CLI. 
+
+##### Prerequisites  
+
+To run all the different tools, you will need the following tools. 
+
+1. Terraform
+1. Terragrunt 
+1. Ansible (Not supported on windows without WSL)
+1. Packer 
+1. kubectl 
+1. helm 
+1. aws-iam-authenticator 
+1. awscli - AWS only 
+
+##### SSH Keys
+
+To setup ssh keys, in order to maintain a simpler governance around these sensitive items, we have a notion of a ssh
+-key profile in the deployment process where you generate new or link to existing keys and then write them to file
+. The CLI walks you through the process but all it is doing is entering in the profile in a document called `secrets
+.yml` which is ignored in version control. The document will end up looking something like this:
+
+```yaml
+ssh_profiles:
+- name: kusama-dev
+  private_key_path: ~/.ssh/kusama-dev
+  public_key_path: ~/.ssh/kusama-dev.pub
+- name: kusama-prod
+  private_key_path: ~/.ssh/kusama-prod
+  public_key_path: ~/.ssh/kusama-prod.pub
+``` 
+
+##### Stack Configuration 
+
+Configuration settings are bespoke to each cloud provider but generally involve prompting the user for various
+ options conditional on what type of network topology the user is trying to deploy. There are three general options, 
+
+1. No DNS 
+2. Single region / single domain 
+3. Cloudflare based geo routed (WIP)
+
+For any kind of DNS routing, the user needs to buy a domain.  For muli-environment deployments, it is recommended to
+ get multiple domains. For single region deployments, the domain needs to reside on the cloud provider registrar. For
+  Cloudflare deployments, the user needs to transfer the domain to Cloudflare and enable "Load Balancing" for geo
+   routing. The user will first deploy all their clusters and then apply the Cloudflare configurations. Each time one
+    adds a cluster, the Cloudflare module needs to reapplied. To remove a cluster, there is a health setup that will
+     prevent traffic from being routed to the cluster and thus, the cloudflare module doesn't necessarily need to be
+      applied. 
+
+The process is self-documented in the CLI or can be done manually by editing the deployment files per the
+ architecture described below. Note that any values can be changed in the deployment files and reapplied to take
+  effect. 
 
 ## Deployment Process 
 
@@ -49,7 +123,7 @@ We order the deployment file names and remote state path per the following conve
 | 4 | Provider | The cloud provider  | aws |
 | 5 | Region | Region to deploy into | us-east-1 |
 | 6 | Stack | The type of stack to deploy  | validator|
-| 7 | Deployment ID | Identifier for unique deployment | 1 |
+| 7 | Deployment ID | Identifier for rolling / canary deployments | 1 |
 
 We then will rely on this hierarchy in the remote state and deployment file. 
 
@@ -127,6 +201,10 @@ Kubernetes is used for monitoring with prometheus, and logging with elasticsearc
    kubernetes only deployment architecture. 
 
 ![](./static/architecture-overview.png)
+
+### Extra Components 
+
+At this time, only kubernetes is supported for running logging and monitoring systems. Options will be exposed for a   
 
 ### Build Status
 
