@@ -12,7 +12,7 @@ import (
 func TestTerragruntAwsComplete(t *testing.T) {
 	t.Parallel()
 
-	folderPath := ".."
+	folderPath := "aws"
 	baseFolder, err := files.CopyTerragruntFolderToTemp(folderPath, t.Name())
 	if err != nil {
 		log.Println(err)

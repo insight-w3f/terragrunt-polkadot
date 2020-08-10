@@ -14,7 +14,9 @@ scratch*
 #
 # Configs
 #
-secrets.yaml
+secrets.yml
+run.yml
+
 .circleci/.configs
 ansible_inventory.tpl
 
