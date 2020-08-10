@@ -1,0 +1,50 @@
+# Cloud Credentials
+provider:
+  type: checkbox
+  message: Which cloud provider do you want to set credentials for?
+  when: "{{ cloud.provider is not defined }}"
+  choices:
+    - aws
+    - azure
+    - gcp
+    - do
+
+## AWS
+cloud_aws_type_:
+  type: select
+  message: How do you want to set credentials?
+  choices:
+    - Instructions on how to get API keys
+    - Use a profile
+    - Provide API keys
+
+cloud_aws_profile_:
+  type: select
+  message: Which profile do you want to use?
+  choices: "{{ cloud.cloud_aws_ }}"
+
+cloud_aws_access_key:
+  type: input
+  message: What is your access key id?
+
+cloud_aws_secret_key:
+  type: input
+  message: What is your secret access key?
+
+cloud_aws_account_id:
+  type: command
+  command: AWS_ACCESS_KEY_ID={{profile.cloud_aws_access_key}} AWS_SECRET_ACCESS_KEY={{profile.cloud_aws_secret_key}} aws sts get-caller-identity | jq -r .Account
+
+cloud_write_:
+  type: yaml
+  path: secrets.yml
+  contents: "{{ global }}"
+  in_place: true
+  update:
+
+cloud_azure_:
+  type: checkbox
+  message: How do you want to set credentials?
+  choices:
+    - Provide API keys
+    - Use a profile
