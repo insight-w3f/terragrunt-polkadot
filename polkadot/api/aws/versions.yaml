@@ -1,28 +1,23 @@
 dev:
-  api-lb: master
-  asg: master
-  k8s-cluster: master
-  k8s-config: master
   network: master
+  k8s-cluster: master
+  asg: master
+  k8s-config: iam-unique-fix
 
 test:
-  api-lb: master
   asg: master
   k8s-cluster: master
   k8s-config: master
   network: master
 
 stage:
-  api-lb: master
   asg: master
   k8s-cluster: master
   k8s-config: master
   network: master
 
 prod:
-  api-lb: master
   asg: master
   k8s-cluster: master
   k8s-config: master
   network: master
-

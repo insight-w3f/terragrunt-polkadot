@@ -4,9 +4,31 @@ version_:
   type: yaml
   path: versions.yaml
 
+aws_regions_options_:
+  type: aws_regions
+  when: "{{ nuki.provider == 'aws' }}"
+
+aws_region:
+  type: select
+  message: Which AWS region?
+  choices: "{{ nuki.aws_regions_options_ }}"
+  when: "{{ nuki.provider == 'aws' }}"
+
 region:
   type: stat
   input: "{{ nuki.aws_region }}"
+
+k8s_enabled:
+  type: confirm
+  message: Do you want to use kubernetes?
+
+prometheus_enabled:
+  type: stat
+  input: "{{ nuki.k8s_enabled }}"
+
+consul_enabled:
+  type: stat
+  input: "{{ nuki.k8s_enabled }}"
 
 # Network
 network_:
@@ -17,14 +39,14 @@ network_:
   existing_context: "{{ nuki }}"
 
 # K8s cluster
-k8s-cluster:
+k8s_cluster_:
   type: nukikata
   merge: true
   chdir: k8s-cluster
   existing_context: "{{ nuki }}"
 
 # Autoscaling Group
-asg:
+asg_:
   type: nukikata
   merge: true
   template: https://github.com/insight-w3f/terraform-polkadot-aws-asg
@@ -32,7 +54,7 @@ asg:
   existing_context: "{{ nuki }}"
 
 # K8s Config
-k8s-config:
+k8s_config_:
   type: nukikata
   merge: true
   template: https://github.com/insight-w3f/terraform-polkadot-k8s-config

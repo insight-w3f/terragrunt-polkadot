@@ -1,5 +1,10 @@
 terraform {
   source = "github.com/insight-w3f/terraform-polkadot-k8s-config.git?ref=${local.vars.versions.k8s-config}"
+
+  before_hook "update_kubeconfig" {
+    commands     = ["apply", "plan", "destroy"]
+    execute      = split(" ", "aws eks --region ${local.vars.run.region} update-kubeconfig --name ${local.vars.deployment_vars.cluster_name}")
+  }
 }
 
 include {
