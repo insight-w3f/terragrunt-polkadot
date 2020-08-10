@@ -16,18 +16,13 @@ secrets_read_:
   context_file: "{{ nuki.scripts_dir_ }}/secrets.yaml"
   existing_context: "{{ nuki }}"
 
+cluster_name:
+  type: input
+  message: What do you want to call your cluster?
+  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
+
 # Regions
 ## Aws
-aws_regions_options_:
-  type: aws_regions
-  when: "{{ nuki.provider == 'aws' }}"
-
-aws_region:
-  type: select
-  message: Which AWS region?
-  choices: "{{ nuki.aws_regions_options_ }}"
-  when: "{{ nuki.provider == 'aws' }}"
-
 aws_provider:
   type: nukikata
   chdir: aws
@@ -35,54 +30,22 @@ aws_provider:
   existing_context: "{{ nuki }}"
 
 # GCP
-gcp_regions_options_:
-  type: gcp_regions
-  when: "{{ 'gcp' in nuki.providers }}"
-
-gcp_regions_:
-  type: checkbox
-  message: Which GCP regions?
-  choices: "{{ nuki.gcp_regions_options_ }}"
-  when: "{{ 'gcp' in nuki.providers and nuki.gcp_regions_options_ | length > 0 }}"
-
 gcp_provider:
   type: nukikata
   chdir: gcp
-  when: "{{ 'gcp' in nuki.providers }}"
-  loop: "{{ nuki.gcp_regions_ }}"
   existing_context: "{{ nuki }}"
+  when: "{{ nuki.provider == 'gcp' }}"
 
 # Azure
-azure_regions_options_:
-  type: azure_regions
-  when: "{{ 'azure' in nuki.providers }}"
-
-azure_regions_:
-  type: checkbox
-  message: Which Azure regions?
-  choices: "{{ nuki.azure_regions_options_ }}"
-  when: "{{ 'azure' in nuki.providers }}"
-
 azure_provider:
   type: nukikata
   chdir: azure
-  when: "{{ 'azure' in nuki.providers }}"
-  loop: "{{ nuki.azure_regions_ }}"
+  when: "{{ nuki.provider == 'azure' }}"
   existing_context: "{{ nuki }}"
 
 # DigitalOcean
-do_regions_options_:
-  type: azure_regions
-  when: "{{ 'azure' in nuki.providers }}"
-
-do_regions_:
-  type: checkbox
-  message: Which Azure regions?
-  choices: "{{ nuki.azure_regions_options_ }}"
-  when: "{{ 'azure' in nuki.providers }}"
-
 do_provider:
   type: nukikata
   chdir: do
-  when: "{{ 'DigitalOcean' in nuki.providers }}"
-
+  existing_context: "{{ nuki }}"
+  when: "{{ nuki.provider == 'do' }}"

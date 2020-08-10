@@ -14,11 +14,10 @@ action_:
     - install: Install dependencies
     - profiles: Set SSH and wallet profiles
     - list: List deployments
-    - create: Create deployment
-    - modify: Modify Existing
-    - apply: Deploy existing
-    - destroy: Destroy existing
-#    - validator: Deploy a simple validator
+    - create: Create new deployment
+    - modify: Modify deployment
+    - apply: Apply deployment
+    - destroy: Destroy deployment
 
 # Install Dependencies
 installs_:

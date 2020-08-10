@@ -23,4 +23,4 @@ destroy_:
   type: shell
   when: "{{ run.action == 'destroy' }}"
   chdir: "polkadot/{{ run.stack }}/{{ run.provider }}"
-  command: terragrunt destroy-all --terragrunt-non-interactive
+  command: terragrunt destroy-all --terragrunt-non-interactive --terragrunt-ignore-dependency-errors

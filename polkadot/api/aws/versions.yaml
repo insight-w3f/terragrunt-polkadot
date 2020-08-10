@@ -1,5 +1,5 @@
 dev:
-  network: master
+  network: dns-zone-fix
   k8s-cluster: master
   asg: master
   k8s-config: iam-unique-fix
