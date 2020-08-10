@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestTerragruntAwsComplete(t *testing.T) {
+func TestTerragruntGcpComplete(t *testing.T) {
 	t.Parallel()
 
 	folderPath := ".."

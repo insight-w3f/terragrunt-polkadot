@@ -1,60 +1,89 @@
 ---
 
-#debug:
-#  type: print
-#  statement: "{{ nuki }}"
-
-
-environment_create:
-  type: list
-  message: Do you want to create a new environment or modify existing?
-  choices:
-    - name: Create new environment
-    - name: Modify existing
-
-environment_existing_list:
-  type: listdir
-  directory: polkadot/api/aws/deployments
-  when: "{{ 'Modify existing' in nuki.environment_create }}"
-
-environment_existing_list_split:
-  type: split
-  items: "{{ nuki.environment_existing_list }}"
-  separator: "-"
-  when: "{{ 'Modify existing' in nuki.environment_create }}"
-
-environment_new:
-  type: input
-  message: What do you want to call your environment (ie - dev / prod)?
-  when: "{{ 'Create new environment' in nuki.environment_create }}"
-
-network_name:
-  type: list
-  message: What network do you want to run?
-  choices:
-    - name: kusama
-    - name: mainnet
-  when: "{{ 'Create new environment' in nuki.environment_create }}"
-
-aws_regions:
-  type: aws_regions
-
-aws_regions_choice:
-  type: checkbox
-  message: Which AWS region?
-  choices: "{{ nuki.aws_regions }}"
-  when: "{{ 'Create new environment' in nuki.environment_create }}"
-
-aws_instances:
-  type: aws_ec2_types
-
-instance_choice:
-  type: list
-  message: What types of instances?
-  choices: "{{ nuki.aws_instances }}"
-  when: "{{ 'Create new environment' in nuki.environment_create }}"
-
-yaml:
+version_:
   type: yaml
-  path: output.yaml
-  contents: "{{ nuki }}"
+  path: versions.yaml
+
+project_choice_:
+  type: select
+  message: Have you created a GCP project yet?
+  choices:
+    - true: "Yes I have"
+    - false: "No, tell me how"
+
+docs_:
+  type: webbrowser
+  url: https://www.notion.so/insightx/GCP-API-Keys-Tutorial-f4a265539a6b47eeb5a6fc01a0ba3a77
+  when: "{{ not nuki.project_choice_ }}"
+
+project:
+  type: input
+  message: "Please enter the project name you want to deploy into >>"
+
+gcp_regions_options_:
+  type: gcp_regions
+  gcp_project: "{{ nuki.project }}"
+
+region:
+  type: select
+  message: Which GCP region?
+  choices: "{{ nuki.gcp_regions_options_ }}"
+
+available_azs_:
+  type: gcp_azs
+  region: "{{ nuki.region }}"
+  gcp_project: "{{ nuki.project }}"
+
+azs:
+  type: checkbox
+  message: "What availability zones do you want to deploy in {{ nuki.region }}?"
+  choices: "{{ nuki.available_azs_ }}"
+
+# Network
+network_:
+  type: nukikata
+  merge: true
+  template: https://github.com/insight-w3f/terraform-polkadot-gcp-network
+  checkout: "{{ nuki.version_[nuki.environment]['network'] }}"
+  existing_context: "{{ nuki }}"
+
+# K8s cluster
+k8s_cluster_:
+  type: nukikata
+  merge: true
+  template: https://github.com/insight-w3f/terraform-polkadot-gcp-k8s-cluster
+  checkout: "{{ nuki.version_[nuki.environment]['k8s-cluster'] }}"
+  existing_context: "{{ nuki }}"
+
+# Autoscaling Group
+asg_:
+  type: nukikata
+  merge: true
+  template: https://github.com/insight-w3f/terraform-polkadot-gcp-asg
+  checkout: "{{ nuki.version_[nuki.environment]['asg'] }}"
+  existing_context: "{{ nuki }}"
+
+# K8s Config
+k8s_config_:
+  type: nukikata
+  merge: true
+  template: https://github.com/insight-w3f/terraform-polkadot-k8s-config
+  checkout: "{{ nuki.version_[nuki.environment]['k8s-config'] }}"
+  existing_context: "{{ nuki }}"
+
+# Write Deployment
+write_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/write.yaml"
+  existing_context: "{{ nuki }}"
+
+# Apply
+apply_confirm_:
+  type: confirm
+  message: Do you want deploy now?
+
+apply_:
+  type: nukikata
+  context_file: "{{ nuki.scripts_dir_ }}/apply.yaml"
+  when: "{{ nuki.apply_confirm_ }}"
+  existing_context: "{{ nuki }}"

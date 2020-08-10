@@ -27,7 +27,7 @@ dependency "cluster" {
 inputs = {
   public_subnet_id = dependency.network.outputs.public_subnets[1]
   private_subnet_id = dependency.network.outputs.private_subnets[1]
-  node_name = local.vars.global_short_id
+  node_name = local.vars.short_id
   security_group_id = dependency.network.outputs.sentry_security_group_id[0]
   vpc_id = dependency.network.outputs.public_vpc_id
   cluster_name = dependency.cluster.outputs.cluster_name
