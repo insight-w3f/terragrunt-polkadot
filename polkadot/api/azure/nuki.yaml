@@ -18,6 +18,11 @@ region:
   type: stat
   input: "{{ nuki.azure_region }}"
 
+cluster_name:
+  type: input
+  message: What do you want to call your cluster?
+  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
+
 # Network
 network_:
   type: nukikata

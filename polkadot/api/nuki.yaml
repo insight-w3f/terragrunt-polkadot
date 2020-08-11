@@ -16,11 +16,6 @@ secrets_read_:
   context_file: "{{ nuki.scripts_dir_ }}/secrets.yaml"
   existing_context: "{{ nuki }}"
 
-cluster_name:
-  type: input
-  message: What do you want to call your cluster?
-  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
-
 # Regions
 ## Aws
 aws_provider:

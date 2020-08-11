@@ -18,6 +18,11 @@ region:
   type: stat
   input: "{{ nuki.aws_region }}"
 
+cluster_name:
+  type: input
+  message: What do you want to call your cluster?
+  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
+
 k8s_enabled:
   type: confirm
   message: Do you want to use kubernetes?

@@ -29,6 +29,11 @@ region:
   message: Which GCP region?
   choices: "{{ nuki.gcp_regions_options_ }}"
 
+cluster_name:
+  type: input
+  message: What do you want to call your cluster?
+  default: "{{nuki.namespace}}-{{nuki.environment}}-{{nuki.region}}"
+
 available_azs_:
   type: gcp_azs
   region: "{{ nuki.region }}"
