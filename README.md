@@ -204,7 +204,8 @@ Kubernetes is used for monitoring with prometheus, and logging with elasticsearc
 
 ### Extra Components 
 
-At this time, only kubernetes is supported for running logging and monitoring systems. Options will be exposed for a   
+At this time, only kubernetes is supported for running logging and monitoring systems. Options will be exposed for a
+ VM based monitoring solution in the future.   
 
 ### Build Status
 
