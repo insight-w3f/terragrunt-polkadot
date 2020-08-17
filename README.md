@@ -188,7 +188,39 @@ To manage this complex process, we developed nukikata as we felt that managing a
 
 ### DNS Architecture
 
+The deployment uses a DNS structure that allows full flexibility in its configuration, all from within the one configuration file.
+Supported deployment styles include:
 
+- Single region, root domain
+- Multi-region, regional domain
+- Multi-region, regional domain with root domain geo-routing
+
+#### Single Region, Root Domain
+
+This deployment style places everything in the root domain specified during configuration.
+You can choose whether you want to add a specific hostname (i.e. api.network.yourdomain.com) to point to your endpoint, or to leave it bare (i.e. network.yourdomain.com).
+
+#### Multi-region, regional domain
+
+In this deployment, you will be creating delegations and subdomains for each region that will run a node.
+Here, the resulting domain will either be api.region.network.yourdomain.com (if you've chosen to add a hostname) or region.network.yourdomain.com
+
+#### Multi-region, regional domain with root domain geo-routing
+
+This deployment is similar to the multi-region deployment, but in addition, you will additionally have an aggregate endpoint that will route requests to the closest deployment to the user.
+Again, you are able to choose to include a hostname (api.network.yourdomain.com) or not (network.yourdomain.com) for the aggregate endpoint.
+
+#### DNS Summary
+
+In summary, in all deployment types, you are able to choose to include a hostname or not.
+This table summarizes the differences between the domains used in the deployments.
+
+|       Deployment Type      	|                 Domain (without hostname)                	|
+|:--------------------------:	|:--------------------------------------------------------:	|
+|        Single Region       	|                  network.yourdomain.com                  	|
+| Multiregion, no georouting 	|               region.network.yourdomain.com              	|
+|   Multiregion, georouting  	| region.network.yourdomain.com AND network.yourdomain.com 	|
+|                            	|                                                          	|
 
 ### Network Topologies 
 
