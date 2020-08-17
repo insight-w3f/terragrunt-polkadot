@@ -220,7 +220,6 @@ This table summarizes the differences between the domains used in the deployment
 |        Single Region       	|                  network.yourdomain.com                  	|
 | Multiregion, no georouting 	|               region.network.yourdomain.com              	|
 |   Multiregion, georouting  	| region.network.yourdomain.com AND network.yourdomain.com 	|
-|                            	|                                                          	|
 
 ### Network Topologies 
 
