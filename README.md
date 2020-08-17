@@ -185,6 +185,11 @@ To manage this complex process, we developed nukikata as we felt that managing a
     deployments. We see many applications of nukikata and are excited to have this project be the intial proving
      ground of this process that we hope to expand on for the years to come. 
 
+
+### DNS Architecture
+
+
+
 ### Network Topologies 
 
 The current architecture is based on a hybrid VM and kubernetes setup options are exposed to adopt either or
