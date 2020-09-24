@@ -9,12 +9,20 @@ deployment_id_label_order:
 
 remote_state_path_label_order:
   - namespace
-  - stack
-  - provider
   - network_name
+  - provider
   - environment
   - region
-#  - deployment_id
+  - stack
+  - deployment_id
+
+#  - namespace
+#  - provider
+#  - network_name
+#  - environment
+#  - region
+#  - stack
+##  - deployment_id
 
 dns_order:
   - region
