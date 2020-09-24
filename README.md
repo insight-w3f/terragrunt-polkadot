@@ -257,4 +257,11 @@ At this time, only kubernetes is supported for running logging and monitoring sy
 - [terraform-ansible-playbook](https://github.com/insight-infrastructure/terraform-aws-ansible-playbook) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-aws-ansible-playbook?style=svg)
 - [terraform-packer-build](https://github.com/insight-infrastructure/terraform-packer-build) ![](https://img.shields.io/github/v/release/insight-infrastructure/terraform-packer-build?style=svg)
 
+## Developing 
+
+This repo is actually a meta repo constructed from some 25+ other repos.  To work with this stack install `meta
+` - `npm i -g meta` and run `meta git clone .` from the base of this repo. All the modules will then be in the
+ `modules` directory. 
+
+
 ![](./static/w3f_badge.png)
