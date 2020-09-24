@@ -29,6 +29,16 @@ dependency "network" {
   config_path = local.network
 }
 
+inputs = {
+  cloud_platform = local.vars.run.provider
+  google_project = local.vars.deployment_vars.project
+  google_service_account_key = local.vars.secrets.service_account_key
+  lb_endpoint = dependency.asg.outputs.lb_endpoint
+  user_email = local.vars.secrets.admin_user_email
+  kubeconfig = base64encode(dependency.k8s.outputs.kube_config)
+  deployment_domain_name = dependency.network.outputs.public_regional_domain
+}
+
 generate "provider" {
   path = "kubernetes.tf"
   if_exists = "overwrite"
@@ -60,14 +70,4 @@ provider "kubernetes" {
     load_config_file       = false
 }
 EOF
-}
-
-inputs = {
-  cloud_platform = local.vars.provider
-  google_project = local.vars.project
-  google_service_account_key = local.vars.secrets.service_account_key
-  lb_endpoint = dependency.asg.outputs.lb_endpoint
-  user_email = local.vars.secrets.admin_user_email
-  kubeconfig = base64encode(dependency.k8s.outputs.kube_config)
-  deployment_domain_name = dependency.network.outputs.public_regional_domain
 }
