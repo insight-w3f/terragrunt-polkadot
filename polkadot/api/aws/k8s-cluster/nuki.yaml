@@ -4,6 +4,10 @@ print_:
   type: print
   statement: Configuring Polkadot AWS Kubernetes Cluster
 
+cluster_version:
+  type: stat
+  input: 1.17
+
 cluster_autoscale:
   type: confirm
   message: Do you want to enable cluster autoscaling?
