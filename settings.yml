@@ -37,3 +37,19 @@ name_label_order:
   - stack
   - network_name
   - environment
+
+network_settings:
+  polkadot:
+    name: polkadot
+    shortname: polkadot
+    api_health: 5000
+    node_exporter: 9610
+    json_rpc: 9933
+    ws_rpc: 9944
+  kusama:
+    name: kusama
+    shortname: ksmcc3
+    api_health: 5001
+    node_exporter: 9611
+    json_rpc: 9934
+    ws_rpc: 9945
