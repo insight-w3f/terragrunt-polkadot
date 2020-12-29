@@ -35,11 +35,6 @@ dependency "network" {
 }
 
 inputs = {
-  region = local.vars.run.region
-  cloud_platform = local.vars.run.provider
-  aws_worker_arn = dependency.cluster.outputs.worker_iam_role_arn
-  base_domain_name = dependency.network.outputs.public_regional_domain
-  kubeconfig = base64encode(dependency.cluster.outputs.kubeconfig)
 }
 
 generate "provider" {

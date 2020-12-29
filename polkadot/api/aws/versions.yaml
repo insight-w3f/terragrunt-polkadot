@@ -1,23 +1,27 @@
 dev:
-  network: dns-zone-fix
-  k8s-cluster: master
   asg: master
-  k8s-config: iam-unique-fix
+  k8s-cluster: master
+  k8s-base: iam-unique-fix
+  network: dns-zone-fix
+  truth: master
 
 test:
   asg: master
   k8s-cluster: master
-  k8s-config: master
+  k8s-base: master
   network: master
+  truth: master
 
 stage:
   asg: master
   k8s-cluster: master
-  k8s-config: master
+  k8s-base: master
   network: master
+  truth: master
 
 prod:
   asg: master
   k8s-cluster: master
-  k8s-config: master
+  k8s-base: master
   network: master
+  truth: master
