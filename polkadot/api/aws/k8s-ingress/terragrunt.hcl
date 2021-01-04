@@ -1,5 +1,5 @@
 terraform {
-  source = "github.com/insight-w3f/terraform-k8s-base-config.git?ref=${local.vars.versions.k8s-base}"
+  source = "github.com/shinyfoil/terraform-polkadot-k8s-api-ingress.git?ref=${local.vars.versions.k8s-ingress}"
 
   before_hook "update_kubeconfig" {
     commands     = ["apply", "plan", "destroy"]
